@@ -41,14 +41,6 @@ export class GameField {
         return this._nextYTranslationDistance / GameField.CameraAcceleration;
     }
 
-    private get topY() {
-        return -this.yTranslation;
-    }
-
-    private get bottomY() {
-        return  this.topY + this._canvas.height
-    }
-
     private centerOnFollowObject() {
         if(this._focusElement) {
             const newYTranslation = -(this._focusElement.y + this._focusElement.height) + this.viewHeight - this.viewHeight * GameField.YTranslationOffsetMultiplier;
