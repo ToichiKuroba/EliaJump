@@ -1,6 +1,7 @@
 import { Day } from "./day";
 import { GameElementHandler } from "./elements/gameElementHandler";
 import { EliaBreakPlatform } from "./eliaBreakPlatform";
+import { End } from "./end";
 import { Figure } from "./figure";
 import { Platform } from "./platform";
 import { SavePoint } from "./savePoint";
@@ -125,6 +126,11 @@ export class StreamPlatformField extends GameElementHandler implements SavePoint
 
             this.add(new Day(this._dayElementContainer, day.date, rowHeight + rowHeight * doubleDay));
         }
+
+        const end = document.createElement("span");
+        end.style.setProperty("--dayHeight", "2000px");
+        this._dayElementContainer.appendChild(end);
+        this.add(new End(0, currentY - 300));
     }
 
     getDaysUntilNextStream(days: {date: Date, hasStreams: boolean}[], startIndex: number) {

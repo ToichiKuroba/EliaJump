@@ -8,6 +8,7 @@ import { GameField } from "./gameFlied";
 import { CollisionElement } from "./collision/collisionElement";
 import { StreamPlatformField } from "./streamPlatformField"; 
 import { SavePointHandler } from "./savePointHandler";
+import { End } from "./end";
 
 function Init() {
     if (document.readyState == "complete") {
@@ -23,7 +24,7 @@ document.addEventListener("readystatechange", (_ev) => {
 
 class Game {
     private _isRunning: boolean = false;
-    private readonly _dev = false;
+    private readonly _dev = true;
     private frameInterval: number = 0;
     private readonly collisionHandler: CollisionHandler;
     private readonly elementHandler: GameElementHandler;
