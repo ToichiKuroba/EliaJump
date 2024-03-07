@@ -26,9 +26,9 @@ private get _weekday() {
         const baseY = this.y + 10;
         super.render(context);
         const paddingTopBottom = 20;
-        context.fillStyle = "#000";  
         const fontSize = (this.height - paddingTopBottom * 2) / 2;
         const baseWidth = this._width - fontSize - 20;
+        context.fillStyle = "#000";  
         context.font = fontSize + "px arial";
         const measure = context.measureText(this._streamTime);
         const paddingRight = measure.width + 10;
@@ -42,14 +42,14 @@ private get _weekday() {
             [titleLine1, titleLine2] = this.breakText(words, breakIndex);
             titleMeasure = context.measureText(titleLine1);
             breakIndex--;
-            if(titleMeasure.width <= maxTitleWidth) {
-                const title2Measure = context.measureText(titleLine1);
-                if(title2Measure.width > maxTitleWidth) {
-                    [titleLine1, titleLine2] = this.breakText(words, words.length / 2);
-                }
-            }
+            
         }
 
+        const title2Measure = context.measureText(titleLine2);
+        if(title2Measure.width > maxTitleWidth) {
+            [titleLine1, titleLine2] = this.breakText(words, words.length / 2);
+        }
+        
         const y = baseY + paddingTopBottom;
         const secondLineY = y + fontSize + 5;
         const titleX = baseX + fontSize;

@@ -1,5 +1,7 @@
 import { Day } from "./day";
 import { GameElementHandler } from "./elements/gameElementHandler";
+import { EliaBreakPlatform } from "./eliaBreakPlatform";
+import { Figure } from "./figure";
 import { Platform } from "./platform";
 import { StreamPlatform } from "./streamPlatform";
 import { platformsConfig } from "./util/platformsConfig";
@@ -25,7 +27,7 @@ export class StreamPlatformField extends GameElementHandler {
         const map: Map<number, Stream[]> = new Map();
         for (let index = 0; index < platformsConfig.liveStreams.length; index++) {
             const element = platformsConfig.liveStreams[index];
-            const date = new Date(element.liveStreamDate.getUTCFullYear(), element.liveStreamDate.getUTCMonth(), element.liveStreamDate.getUTCDate());
+            const date = new Date(element.liveStreamDate.getFullYear(), element.liveStreamDate.getMonth(), element.liveStreamDate.getDate());
             const streamDate = date.getTime();
             if(streamDate < this._firstDay){ 
                 this._firstDay = streamDate;
@@ -36,13 +38,16 @@ export class StreamPlatformField extends GameElementHandler {
             }
 
             let streams = map.get(streamDate);
-            if(streams === undefined)
-            {
-                streams = [];
-                map.set(date.getTime(), streams);
-            }
 
-            streams.push(element);
+            if((streams == undefined || !streams.some(stream => stream.liveStreamDate.getTime() == element.liveStreamDate.getTime())) && this.calculateFullStreamHours(element) > 0){  
+                if(streams === undefined)
+                {
+                    streams = [];
+                    map.set(date.getTime(), streams);
+                }
+
+                streams.push(element);
+            }
         }
 
         return map;
@@ -55,7 +60,7 @@ export class StreamPlatformField extends GameElementHandler {
         days.push({date: previusDay, hasStreams: true});
         while(previusDay.getTime() < this._lastDay){
             let nextDay = new Date(previusDay.getTime());
-            nextDay.setUTCDate(previusDay.getUTCDate() + 1);
+            nextDay.setDate(previusDay.getDate() + 1);
             days.push({date: nextDay, hasStreams: this._streamsForDays.has(nextDay.getTime())});
             previusDay = nextDay;
         }
@@ -85,25 +90,49 @@ export class StreamPlatformField extends GameElementHandler {
         for (let index = 0; index < days.length; index++) {
             currentY -= rowHeight;
             const day = days[index];
-            this.add(new Day(this._dayElementContainer, day.date));
+            let doubleDay : number = 0;
             if(day.hasStreams) {
                 const streams = this._streamsForDays.get(day.date.getTime());
                 let remainingWidhtUnits = StreamPlatformField.WidthUnitDevider;
                 let hasGap = false;
-                let doubleDay : number = 0;
                 for (let streamIndex = 0; streams && streamIndex < streams.length; streamIndex++) {
-                    const stream = streams.sort(stream => stream.liveStreamDate.getTime())[streamIndex];              
+                    const stream = streams.sort((streamA, streamB) => streamA.liveStreamDate.getTime() - streamB.liveStreamDate.getTime())[streamIndex];              
                     let platform : Platform;    
                     [platform, remainingWidhtUnits, hasGap, doubleDay] =this.convertStreamIntoPlatforms(stream, currentY,remainingWidhtUnits, hasGap, doubleDay)
                     this.add(platform);
                 }
                 currentY -= rowHeight * doubleDay;
+
+                const daysUntilNextStream = this.getDaysUntilNextStream(days, index);
+                if(daysUntilNextStream > (Figure.FullJumpHeight * 1.75) / rowHeight) {
+                    const startY = currentY - StreamPlatformField.StreamHeight;
+                    const endY = startY - rowHeight * (daysUntilNextStream - 1);
+                    const showInUnit = this.getShowInWidthUnit(day.date.getTime(), 0, StreamPlatformField.WidthUnitDevider -2)
+                    const x = this._x + this.widthUnitWidth * showInUnit;
+                    this.add(new EliaBreakPlatform(x, startY, endY, this.widthUnitWidth * 2,  StreamPlatformField.StreamHeight));
+                }
             }
+
+            this.add(new Day(this._dayElementContainer, day.date, rowHeight + rowHeight * doubleDay));
         }
+    }
+
+    getDaysUntilNextStream(days: {date: Date, hasStreams: boolean}[], startIndex: number) {
+        for (let index = startIndex + 1; index < days.length; index++) {
+            if(days[index].hasStreams){
+                return index - startIndex;
+            }
+        } 
+
+        return -1;
     }
 
     convertStreamIntoPlatforms(stream: Stream, y: number, remainingWidhtUnits: number, hasGap: boolean, doubleDay: number) : [platform: Platform, remainingWidthUnits: number, hasGap: boolean, doubleDay: number] {
         let widhtUnits = this.calculateFullStreamHours(stream) * StreamPlatformField.WidthUnitPerHour;
+
+        if(widhtUnits <= 1) {
+            widhtUnits = 2;
+        }
 
         if(widhtUnits >= 12) {
             widhtUnits = 11;
@@ -121,7 +150,7 @@ export class StreamPlatformField extends GameElementHandler {
         hasGap = false;
         if(widhtUnits < centerUnit) {
             const endUnit = centerUnit + startUnit;
-            showInUnit = this.getShowInWidthUnit(stream, startUnit, endUnit - widhtUnits);
+            showInUnit = this.getShowInWidthUnit(stream.liveStreamDate.getTime(), startUnit, endUnit - widhtUnits);
             hasGap = showInUnit != startUnit;
         }
 
@@ -141,9 +170,8 @@ export class StreamPlatformField extends GameElementHandler {
         return Math.round(toSeconds(parse(stream.length)) / StreamPlatformField.SecondsPerHour);
     }
 
-    getShowInWidthUnit(stream: Stream, startUnit: number, endUnit: number) {
-        
-        const rng = prand.xoroshiro128plus(stream.liveStreamDate.getTime() ^ StreamPlatformField.BaseSeed);
+    getShowInWidthUnit(seed: number, startUnit: number, endUnit: number) {
+        const rng = prand.xoroshiro128plus(seed ^ StreamPlatformField.BaseSeed);
         const [randomShowInUnit] = prand.uniformIntDistribution(startUnit, endUnit, rng);
         return randomShowInUnit;
     }

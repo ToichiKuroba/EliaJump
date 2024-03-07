@@ -1,20 +1,6 @@
 {
     "LiveStreams": [
         {
-            "VideoLink": "https://www.youtube.com/watch?v=WSXj-VZ_Dxo",
-            "Title": "Cupid (Twin Ver.) - FIFTY FIFTY (Covered by Elia Stellaria)",
-            "PublishedAt": "2023-09-01T19:55:07Z",
-            "Length": "PT2M52S",
-            "LiveStreamDate": "2023-09-01T19:55:07Z"
-        },
-        {
-            "VideoLink": "https://www.youtube.com/watch?v=f-d7clEkIRk",
-            "Title": "Kyoufuu All Back - 強風オールバック / ver. Elia Stellaria",
-            "PublishedAt": "2023-12-17T20:00:08Z",
-            "Length": "PT2M17S",
-            "LiveStreamDate": "2023-12-17T20:00:08Z"
-        },
-        {
             "VideoLink": "https://www.youtube.com/watch?v=iWLOHjyuhEM",
             "Title": "Samurai goes to Magic School【Elden Ring】",
             "PublishedAt": "2024-02-02T23:28:48Z",
@@ -57,13 +43,6 @@
             "LiveStreamDate": "2024-01-29T09:02:54Z"
         },
         {
-            "VideoLink": "https://www.youtube.com/watch?v=gygOejbVbD8",
-            "Title": "DECO*27 - Zombies 【Elia Stellaria Cover】",
-            "PublishedAt": "2023-09-23T12:00:10Z",
-            "Length": "PT3M10S",
-            "LiveStreamDate": "2023-09-23T12:00:10Z"
-        },
-        {
             "VideoLink": "https://www.youtube.com/watch?v=oJeBTP8J8nU",
             "Title": "【 Buddies Announcement 】A New Chapter Begins! 💓",
             "PublishedAt": "2023-09-05T14:15:10Z",
@@ -76,13 +55,6 @@
             "PublishedAt": "2024-02-14T21:18:01Z",
             "Length": "PT1H4M31S",
             "LiveStreamDate": "2024-02-14T19:57:27Z"
-        },
-        {
-            "VideoLink": "https://www.youtube.com/watch?v=k734t2F4JWM",
-            "Title": "【V-DERE】Debut Announcement!",
-            "PublishedAt": "2023-09-24T14:30:10Z",
-            "Length": "PT2M52S",
-            "LiveStreamDate": "2023-09-24T14:30:10Z"
         },
         {
             "VideoLink": "https://www.youtube.com/watch?v=FfLlEntjaqg",
@@ -398,13 +370,6 @@
             "PublishedAt": "2023-09-23T15:02:57Z",
             "Length": "PT2H37M7S",
             "LiveStreamDate": "2023-09-23T12:05:56Z"
-        },
-        {
-            "VideoLink": "https://www.youtube.com/watch?v=RlzFm498GXo",
-            "Title": "First Blind Playthrough Part 2!【 Little Nightmares 2】",
-            "PublishedAt": "2023-04-21T23:57:13Z",
-            "Length": "PT3H22M18S",
-            "LiveStreamDate": "2023-04-21T20:14:41Z"
         },
         {
             "VideoLink": "https://www.youtube.com/watch?v=LzVwusNWRuw",
@@ -1086,13 +1051,6 @@
             "LiveStreamDate": "2023-12-12T09:02:46Z"
         },
         {
-            "VideoLink": "https://www.youtube.com/watch?v=ElEj3ZOtFFU",
-            "Title": "My Movie.mp4",
-            "PublishedAt": "2023-06-23T11:20:08Z",
-            "Length": "PT1M29S",
-            "LiveStreamDate": "2023-06-23T11:20:08Z"
-        },
-        {
             "VideoLink": "https://www.youtube.com/watch?v=IsQqL7xKQr8",
             "Title": "#MemElia Review!【 Zatsudan/Just Chatting】",
             "PublishedAt": "2023-05-23T11:38:20Z",
@@ -1548,13 +1506,6 @@
             "LiveStreamDate": "2023-08-15T08:00:27Z"
         },
         {
-            "VideoLink": "https://www.youtube.com/watch?v=QIeMgewin34",
-            "Title": "10 HOUR 10K CELEBRATION【 Legend of Zelda Breath of the Wild】",
-            "PublishedAt": "2023-04-27T21:09:09Z",
-            "Length": "PT11H11M46S",
-            "LiveStreamDate": "2023-04-27T09:00:57Z"
-        },
-        {
             "VideoLink": "https://www.youtube.com/watch?v=T52SJzwbY6s",
             "Title": "Clippy Time! #EliClipse【 Zatsudan/Just Chatting】",
             "PublishedAt": "2023-05-04T12:49:15Z",
@@ -1698,6 +1649,20 @@
         }
     ],
     "Videos": [
+        {
+            "VideoLink": "https://www.youtube.com/watch?v=k734t2F4JWM",
+            "Title": "【V-DERE】Debut Announcement!",
+            "PublishedAt": "2023-09-24T14:30:10Z",
+            "Length": "PT2M52S",
+            "LiveStreamDate": "2023-09-24T14:30:10Z"
+        },
+        {
+            "VideoLink": "https://www.youtube.com/watch?v=gygOejbVbD8",
+            "Title": "DECO*27 - Zombies 【Elia Stellaria Cover】",
+            "PublishedAt": "2023-09-23T12:00:10Z",
+            "Length": "PT3M10S",
+            "LiveStreamDate": "2023-09-23T12:00:10Z"
+        },
         {
             "VideoLink": "https://www.youtube.com/watch?v=l_k6kvAqZ7k",
             "Title": "\"Don\u0027t Be Sad\"",
@@ -1903,10 +1868,30 @@
             "Length": "PT11M46S"
         },
         {
+            "VideoLink": "https://www.youtube.com/watch?v=WSXj-VZ_Dxo",
+            "Title": "Cupid (Twin Ver.) - FIFTY FIFTY (Covered by Elia Stellaria)",
+            "PublishedAt": "2023-09-01T19:55:07Z",
+            "Length": "PT2M52S"
+        },
+        {
             "VideoLink": "https://www.youtube.com/watch?v=CKn3gfSAhK4",
             "Title": "Rating Girl Dinners with @GXAuraOfficial !【Zatsudan / Just Chatting】",
             "PublishedAt": "2023-11-22T23:11:48Z",
             "Length": "PT2H32M53S"
+        },
+        {
+            "VideoLink": "https://www.youtube.com/watch?v=f-d7clEkIRk",
+            "Title": "Kyoufuu All Back - 強風オールバック / ver. Elia Stellaria",
+            "PublishedAt": "2023-12-17T20:00:08Z",
+            "Length": "PT2M17S",
+            "LiveStreamDate": "2023-12-17T20:00:08Z"
+        },
+        {
+            "VideoLink": "https://www.youtube.com/watch?v=ElEj3ZOtFFU",
+            "Title": "My Movie.mp4",
+            "PublishedAt": "2023-06-23T11:20:08Z",
+            "Length": "PT1M29S",
+            "LiveStreamDate": "2023-06-23T11:20:08Z"
         }
     ],
     "Shorts": [

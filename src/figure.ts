@@ -2,6 +2,7 @@ import { CollisionV2 } from "./collision/collision";
 import { CollisionType } from "./collision/collisionType";
 import { MovingCollisionElement } from "./collision/movingCollisionElement";
 import { GameElementState } from "./elements/gameElementState";
+import { SavePoint } from "./savePoint";
 import { FocusElement } from "./util/focusElement";
 import { Timer } from "./util/timer";
 
@@ -16,7 +17,7 @@ export class Figure extends MovingCollisionElement implements FocusElement {
     private static SmallJumpStrength = 10;
     private static MediumJumpStrength = 50;
     private static FullJumpStrength = 100;
-    private static FullJumpHeight = 675;
+    public static FullJumpHeight = 675;
     private static MaxJumpDistance = 500;
     private static MaxFootSpeed = 1;
     private _jumpStrengthX = 0;
@@ -25,6 +26,7 @@ export class Figure extends MovingCollisionElement implements FocusElement {
     private _spaceTimer = new Timer();
     private _dev: boolean;
     static MaxFallSpeed: number = 10;
+    private _ignoreGravity: boolean = false;
     private get _footSpeed() {
         return (Figure.MaxFootSpeed / 100) * this._jumpStrengthY;
     };
@@ -102,33 +104,6 @@ export class Figure extends MovingCollisionElement implements FocusElement {
                 this._direction = 1;
                 this._spaceTimer.Start();
             }
-
-            if (this._dev) {
-                if (ev.key == 'g') {
-
-                }
-
-                const devSpeed = ev.shiftKey ? 20 : ev.ctrlKey ? 1 : 10;
-                if (ev.key == 'ArrowLeft') {
-                    this._ignoreCollision = true;
-                    this._x -= devSpeed;
-                }
-
-                if (ev.key == 'ArrowRight') {
-                    this._ignoreCollision = true;
-                    this._x += devSpeed;
-                }
-
-                if (ev.key == "ArrowUp") {
-                    this._ignoreCollision = true;
-                    this._y -= devSpeed;
-                }
-
-                if (ev.key == "ArrowDown") {
-                    this._ignoreCollision = true;
-                    this._y += devSpeed;
-                }
-            }
         } else if (!this._isDoubleJumping) {
             if (ev.key == 'w' && !this._spaceTimer.isRunning) {
                 this.endJump();
@@ -151,6 +126,31 @@ export class Figure extends MovingCollisionElement implements FocusElement {
                 this._spaceTimer.Start();
             }
         }
+
+        if (this._dev) {
+            const devSpeed = ev.shiftKey ? 100 : ev.ctrlKey ? 1 : 10;
+            if (ev.key == 'ArrowLeft' || ev.key == 'ArrowRight' || ev.key == "ArrowUp" || ev.key == "ArrowDown") { 
+                this._ignoreCollision = true;
+                this._ignoreGravity = true;
+                this.endJump();
+            }
+
+            if (ev.key == 'ArrowLeft') {
+                this._x -= devSpeed;
+            }
+
+            if (ev.key == 'ArrowRight') {
+                this._x += devSpeed;
+            }
+
+            if (ev.key == "ArrowUp") {
+                this._y -= devSpeed;
+            }
+
+            if (ev.key == "ArrowDown") {
+                this._y += devSpeed;
+            }
+        }
     }
 
     keyUp(ev: KeyboardEvent) {
@@ -170,6 +170,11 @@ export class Figure extends MovingCollisionElement implements FocusElement {
             if (ev.key == 'ArrowLeft' || ev.key == "ArrowDown" || ev.key == 'ArrowRight' || ev.key == "ArrowUp") {
                 this._ignoreCollision = false;
             }
+
+            if (ev.key == 'g') {
+                this._ignoreGravity = false;
+            }
+
         }
     }
 
@@ -234,6 +239,8 @@ export class Figure extends MovingCollisionElement implements FocusElement {
                 this._calculationSpeed = (this._jumpStrengthX / 1.25) / this._jumpStrengthX;
                 this._jumpStrengthX = this._jumpStrengthX / 1.25;
             }
+        }else if(!this._isDoubleJumping && !this._ignoreGravity) {
+            this._y += Figure.MaxFallSpeed;
         }
     }
 
@@ -278,6 +285,12 @@ export class Figure extends MovingCollisionElement implements FocusElement {
         this._speedY = 0;
         this._speedX = 0;
         this._calculationSpeed = 1;
+    }
+
+    goToSavePoint(savePoint: SavePoint) {
+        this.endJump();
+        this._x = savePoint.x;
+        this._y = savePoint.y - this._height;
     }
 
     fixCollision(collision: CollisionV2): void {
