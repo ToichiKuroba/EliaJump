@@ -16,8 +16,8 @@ export class Figure extends MovingCollisionElement implements FocusElement {
     private static SmallJumpStrength = 10;
     private static MediumJumpStrength = 50;
     private static FullJumpStrength = 100;
-    private static FullJumpHeight = 600;
-    private static MaxJumpDistance = 400;
+    private static FullJumpHeight = 675;
+    private static MaxJumpDistance = 500;
     private static MaxFootSpeed = 1;
     private _jumpStrengthX = 0;
     private _jumpStrengthY = 0;

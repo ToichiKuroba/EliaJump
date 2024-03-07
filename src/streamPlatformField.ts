@@ -11,8 +11,8 @@ export class StreamPlatformField extends GameElementHandler {
     private static WidthUnitDevider = 12;
     private static WidthUnitPerHour = 1;
     private static SecondsPerHour = 3600;
-    private static GapPerDay = 125;
-    private static StreamHeight = 25;
+    private static GapPerDay = 150;
+    private static StreamHeight = 75;
     private readonly _streamsForDays : Map<number, Stream[]>;
     private _firstDay : number = Date.now();
     private _lastDay : number = 0;
@@ -136,7 +136,7 @@ export class StreamPlatformField extends GameElementHandler {
     }
 
     calculateFullStreamHours(stream: Stream) {
-        return Math.floor(toSeconds(parse(stream.length)) / StreamPlatformField.SecondsPerHour);
+        return Math.round(toSeconds(parse(stream.length)) / StreamPlatformField.SecondsPerHour);
     }
 
     getShowInWidthUnit(stream: Stream, startUnit: number, endUnit: number) {
