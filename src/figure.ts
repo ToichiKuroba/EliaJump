@@ -24,6 +24,7 @@ export class Figure extends MovingCollisionElement implements FocusElement {
     private _jumpStartTime = 0;
     private _spaceTimer = new Timer();
     private _dev: boolean;
+    static MaxFallSpeed: number = 10;
     private get _footSpeed() {
         return (Figure.MaxFootSpeed / 100) * this._jumpStrengthY;
     };
@@ -227,10 +228,11 @@ export class Figure extends MovingCollisionElement implements FocusElement {
             this._x += this._speedX;
             this._y += this._speedY;
 
-            if (this._speedY > 0 && this._calculationSpeed >= 1 && this._jumpStrengthX != Figure.SmallJumpStrength) {
+            if(this._speedY > Figure.MaxFallSpeed) {
+                this._calculationSpeed = Figure.MaxFallSpeed / this._speedY;
+            } else if (this._speedY > 0 && this._calculationSpeed >= 1 && this._jumpStrengthX != Figure.SmallJumpStrength) {
                 this._calculationSpeed = (this._jumpStrengthX / 1.25) / this._jumpStrengthX;
                 this._jumpStrengthX = this._jumpStrengthX / 1.25;
-
             }
         }
     }
@@ -254,7 +256,6 @@ export class Figure extends MovingCollisionElement implements FocusElement {
         let lastHeight = 0;
         height = this.calculateHeightQudratic(jumpTime);
         lastHeight = this.calculateHeightQudratic(jumpTimeLastCalculation);
-
         return -(height - lastHeight);
     }
 
