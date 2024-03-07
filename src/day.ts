@@ -9,7 +9,7 @@ export class Day extends DomElement<"span">{
     }
 
     refresh(): void {
-        throw new Error("Method not implemented.");
+        this.element.innerText = this._date.getDay().toString();
     }
     state: GameElementState = GameElementState.Inactive;
     calculateNextFrame(): void {

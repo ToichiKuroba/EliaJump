@@ -1,4 +1,3 @@
-import { MovingCollisionElement } from "./collision/movingCollisionElement";
 import { GameElementHandler } from "./elements/gameElementHandler";
 import { RenderElement } from "./elements/renderElement";
 import { FocusElement } from "./util/focusElement";

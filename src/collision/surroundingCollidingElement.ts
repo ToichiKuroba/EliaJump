@@ -15,7 +15,7 @@ export class SurroundingCollidingElement extends CollisionElement {
         this._height = height;
     }
 
-    render(context: CanvasRenderingContext2D): void {
+    render(): void {
     }
     state: GameElementState = GameElementState.Inactive;
     calculateNextFrame(): void {

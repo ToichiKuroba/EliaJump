@@ -1,3 +1,4 @@
+import { Day } from "./day";
 import { GameElementHandler } from "./elements/gameElementHandler";
 import { Platform } from "./platform";
 import { platformsConfig } from "./util/platformsConfig";
@@ -80,9 +81,10 @@ export class StreamPlatformField extends GameElementHandler {
         let currentY = this._baseLine;
         for (let index = 0; index < days.length; index++) {
             currentY -= rowHeight;
-            const element = days[index];
-            if(element.hasStreams) {
-                const streams = this._streamsForDays.get(element.date.getTime());
+            const day = days[index];
+            this.add(new Day(this._dayElementContainer, day.date));
+            if(day.hasStreams) {
+                const streams = this._streamsForDays.get(day.date.getTime());
                 let remainingWidhtUnits = StreamPlatformField.WidthUnitDevider;
                 let hasGap = false;
                 let doubleDay : number = 0;
@@ -120,7 +122,7 @@ export class StreamPlatformField extends GameElementHandler {
             hasGap = showInUnit != startUnit;
         }
 
-        const x = this.widthUnitWidth * showInUnit;
+        const x = this._x + this.widthUnitWidth * showInUnit;
 
         remainingWidhtUnits -= showInUnit;
         remainingWidhtUnits -= widhtUnits;
