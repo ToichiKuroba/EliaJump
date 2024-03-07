@@ -16,11 +16,27 @@ body, html {
     flex-grow: 1;
     display: grid;
     grid-template-columns: 1fr 800px 1fr;
-    grid-template-rows: auto;
+    grid-template-rows: 100%;
     grid-template-areas: 
     "left game right";
   }
   
+  .leftFrame {
+    display: flex;
+    flex-direction: column-reverse;
+    overflow-y: hidden;
+  }
+
+  .dayContainer {
+    --dayHeight: 0px;
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .dayContainer span {
+    height: var(--dayHeight);
+  }
+
   .game {
     overflow: hidden;
   }

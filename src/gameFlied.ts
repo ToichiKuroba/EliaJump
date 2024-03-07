@@ -16,6 +16,7 @@ export class GameField {
     private _focusElement: FocusElement | undefined;
     private readonly _dev: boolean;
     private _clearBeforeRender: boolean = true;
+    private _translateElements: HTMLElement[] = [];
     get bottom() {
         return this._canvas.height;
     }
@@ -110,14 +111,26 @@ export class GameField {
     }
 
     renderFrame() {
-        this.calcualteYTranslation();
-        this.yTranslation -= this._cameraSpeed;
-        console.log(this.yTranslation);
-        this._context?.translate(0, Math.round(this.yTranslation));
+        this.translateScreen();
         if(this._clearBeforeRender) {
             this._context?.clearRect(0, 0, this._canvas.width, this._canvas.height);
         }
         this._elementHandler.render(this);
+    }
+
+    translateScreen() {
+        this.calcualteYTranslation();
+        this.yTranslation -= this._cameraSpeed;
+        console.log(this.yTranslation);
+        this._context?.translate(0, Math.round(this.yTranslation));
+        for (let index = 0; index < this._translateElements.length; index++) {
+            const translateElement = this._translateElements[index];
+            translateElement.style.transform = `translate(0, ${this.yTranslation}px)`;
+        }
+    }
+
+    addToTranslate(element: HTMLElement){
+        this._translateElements.push(element);
     }
 
     dispose() {

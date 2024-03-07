@@ -6,10 +6,19 @@ export class Day extends DomElement<"span">{
     constructor(container: HTMLElement, date: Date){
         super(container, "span");
         this._date = date;
+        const dateElement = document.createElement("span");
+        dateElement.classList.add("date");
+        dateElement.innerText = this._date.getDate().toString();
+        this.element.appendChild(dateElement);
+        if(this._date.getDate() == 1) {
+            const monthElement = document.createElement("span");
+            monthElement.classList.add("month");
+            monthElement.innerText = date.toLocaleString('default', { month: 'long' });
+            this.element.appendChild(monthElement);
+        }
     }
 
     refresh(): void {
-        this.element.innerText = this._date.getDay().toString();
     }
     state: GameElementState = GameElementState.Inactive;
     calculateNextFrame(): void {

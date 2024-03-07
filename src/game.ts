@@ -84,9 +84,10 @@ class Game {
         const player = new Figure(0, this._gameField.bottom - 50, this._dev);
         this._gameField.follow(player);
         this.elementHandler.add(player);
-        var leftFrame = document.querySelector<HTMLElement>(".leftFrame");
-        if(leftFrame) {
-            this.elementHandler.add(new StreamPlatformField(0, this._gameField.viewHeight, this._gameField.width, leftFrame));
+        var dayContainer = document.querySelector<HTMLElement>(".dayContainer");
+        if(dayContainer) {
+            this._gameField.addToTranslate(dayContainer);
+            this.elementHandler.add(new StreamPlatformField(0, this._gameField.viewHeight, this._gameField.width, dayContainer));
         }else {
             this.elementHandler.add(new PlatformField(0, -1000, this._gameField.width, this._gameField.viewHeight + 1000))
         }

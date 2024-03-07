@@ -79,6 +79,7 @@ export class StreamPlatformField extends GameElementHandler {
         const days = this.getDays();
         const rowHeight = StreamPlatformField.GapPerDay + StreamPlatformField.StreamHeight;
         let currentY = this._baseLine;
+        this._dayElementContainer.style.setProperty('--dayHeight', rowHeight + "px");
         for (let index = 0; index < days.length; index++) {
             currentY -= rowHeight;
             const day = days[index];
