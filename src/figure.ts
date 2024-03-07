@@ -7,6 +7,9 @@ import { FocusElement } from "./util/focusElement";
 import { Timer } from "./util/timer";
 
 export class Figure extends MovingCollisionElement implements FocusElement {
+    canSave() {
+        return !this._isJumping && !this._isDoubleJumping;
+    }
     protected _speedX: number = 0;
     protected _speedY: number = 0;
     protected _y: number;

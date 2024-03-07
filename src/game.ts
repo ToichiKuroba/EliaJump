@@ -7,6 +7,8 @@ import { PlatformField } from "./platformField";
 import { GameField } from "./gameFlied";
 import { CollisionElement } from "./collision/collisionElement";
 import { StreamPlatformField } from "./streamPlatformField";
+import { SavePoint } from "./savePoint";
+import { SavePointHandler } from "./savePointHandler";
 
 function Init() {
     if (document.readyState == "complete") {
@@ -27,6 +29,7 @@ class Game {
     private readonly collisionHandler: CollisionHandler;
     private readonly elementHandler: GameElementHandler;
     private readonly _gameField: GameField;
+    private _savePointHandler: SavePointHandler | undefined;
     constructor() {
         this.elementHandler = new GameElementHandler(); 
         this._gameField = new GameField(document.querySelector<HTMLElement>(".game")!, this.elementHandler, this._dev);
@@ -59,6 +62,7 @@ class Game {
         this.frameInterval = setInterval(() => {
             this._gameField.adjustSize();
             this.elementHandler.calculateNextFrame();
+            this._savePointHandler?.checkSavePoint();
             this.collisionHandler.detectCollisions();
             this._gameField.renderFrame();
         }, 10);
@@ -77,23 +81,29 @@ class Game {
         this.elementHandler.removeEventListener("Removed", this.handleElementRemoved);
         this.elementHandler.dispose();
         this.collisionHandler.dispose();
+        this._savePointHandler?.dispose();
         this._isRunning = false;
     }
 
     private RunGame() {
+        let streamPlatform: StreamPlatformField | undefined;
         const player = new Figure(0, this._gameField.bottom - 50, this._dev);
         this._gameField.follow(player);
         this.elementHandler.add(player);
-        var dayContainer = document.querySelector<HTMLElement>(".dayContainer");
+        const dayContainer = document.querySelector<HTMLElement>(".dayContainer");
         if(dayContainer) {
             this._gameField.addToTranslate(dayContainer);
-            this.elementHandler.add(new StreamPlatformField(0, this._gameField.viewHeight, this._gameField.width, dayContainer));
+            streamPlatform = new StreamPlatformField(0, this._gameField.viewHeight, this._gameField.width, dayContainer);
+            this.elementHandler.add(streamPlatform);
         }else {
             this.elementHandler.add(new PlatformField(0, -1000, this._gameField.width, this._gameField.viewHeight + 1000))
         }
 
         const startTime = Date.now();
         this.elementHandler.subElementInitialize();
+
+        this._savePointHandler = new SavePointHandler(player, streamPlatform?.savePoints ?? []);
+
         console.log(`Initialize took: ${startTime - Date.now()}ms`);
     }
 }

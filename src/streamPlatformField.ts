@@ -3,13 +3,15 @@ import { GameElementHandler } from "./elements/gameElementHandler";
 import { EliaBreakPlatform } from "./eliaBreakPlatform";
 import { Figure } from "./figure";
 import { Platform } from "./platform";
+import { SavePoint } from "./savePoint";
+import { SavePointProvider } from "./savePointProvider";
 import { StreamPlatform } from "./streamPlatform";
 import { platformsConfig } from "./util/platformsConfig";
 import { Stream } from "./util/stream";
 import { parse, toSeconds } from "iso8601-duration";
 import prand from 'pure-rand';
 
-export class StreamPlatformField extends GameElementHandler {
+export class StreamPlatformField extends GameElementHandler implements SavePointProvider {
     private static BaseSeed = 3948951295.589653;
     private static WidthUnitDevider = 12;
     private static WidthUnitPerHour = 1;
@@ -76,6 +78,7 @@ export class StreamPlatformField extends GameElementHandler {
         this._dayElementContainer = dayElementContainer;
         this._streamsForDays = this.getStreamsForDays();
     }
+    savePoints:SavePoint[] = [];
 
     private get widthUnitWidth() {
         return this._width / StreamPlatformField.WidthUnitDevider;
@@ -87,6 +90,7 @@ export class StreamPlatformField extends GameElementHandler {
         let currentY = this._baseLine;
         this._dayElementContainer.style.setProperty('--dayHeight', rowHeight + "px");
         this._dayElementContainer.style.setProperty('--platformHeight', StreamPlatformField.StreamHeight + "px");
+        let lastSavePointMonth = days[0].date.getMonth();
         for (let index = 0; index < days.length; index++) {
             currentY -= rowHeight;
             const day = days[index];
@@ -100,6 +104,12 @@ export class StreamPlatformField extends GameElementHandler {
                     let platform : Platform;    
                     [platform, remainingWidhtUnits, hasGap, doubleDay] =this.convertStreamIntoPlatforms(stream, currentY,remainingWidhtUnits, hasGap, doubleDay)
                     this.add(platform);
+
+                    
+                    if(day.date.getMonth() != lastSavePointMonth) {
+                        this.savePoints.push(new SavePoint(platform.x, platform.y));
+                        lastSavePointMonth = day.date.getMonth();
+                    }
                 }
                 currentY -= rowHeight * doubleDay;
 
