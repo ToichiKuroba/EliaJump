@@ -6,8 +6,7 @@ import { Figure } from "./figure";
 import { PlatformField } from "./platformField";
 import { GameField } from "./gameFlied";
 import { CollisionElement } from "./collision/collisionElement";
-import { StreamPlatformField } from "./streamPlatformField";
-import { SavePoint } from "./savePoint";
+import { StreamPlatformField } from "./streamPlatformField"; 
 import { SavePointHandler } from "./savePointHandler";
 
 function Init() {
@@ -24,7 +23,7 @@ document.addEventListener("readystatechange", (_ev) => {
 
 class Game {
     private _isRunning: boolean = false;
-    private readonly _dev = true;
+    private readonly _dev = false;
     private frameInterval: number = 0;
     private readonly collisionHandler: CollisionHandler;
     private readonly elementHandler: GameElementHandler;

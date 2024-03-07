@@ -15,6 +15,7 @@ body, html {
     border: 1px solid #81678e;
   }
 
+
   .main {
     flex-grow: 1;
     display: grid;
@@ -22,6 +23,11 @@ body, html {
     grid-template-rows: 100%;
     grid-template-areas: 
     "left game";
+  }
+
+  .controlls {
+    position: absolute;
+    right: 0;
   }
 
   .resources {
@@ -48,7 +54,8 @@ body, html {
     display: flex;
     justify-content: space-between;
     flex-direction: column;
-    align-items: center;
+    align-items: end;
+    padding-right: 5px;
   }
 
   .dayContainer .date {
