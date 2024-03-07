@@ -1,6 +1,7 @@
 import { Day } from "./day";
 import { GameElementHandler } from "./elements/gameElementHandler";
 import { Platform } from "./platform";
+import { StreamPlatform } from "./streamPlatform";
 import { platformsConfig } from "./util/platformsConfig";
 import { Stream } from "./util/stream";
 import { parse, toSeconds } from "iso8601-duration";
@@ -80,6 +81,7 @@ export class StreamPlatformField extends GameElementHandler {
         const rowHeight = StreamPlatformField.GapPerDay + StreamPlatformField.StreamHeight;
         let currentY = this._baseLine;
         this._dayElementContainer.style.setProperty('--dayHeight', rowHeight + "px");
+        this._dayElementContainer.style.setProperty('--platformHeight', StreamPlatformField.StreamHeight + "px");
         for (let index = 0; index < days.length; index++) {
             currentY -= rowHeight;
             const day = days[index];
@@ -119,7 +121,7 @@ export class StreamPlatformField extends GameElementHandler {
         hasGap = false;
         if(widhtUnits < centerUnit) {
             const endUnit = centerUnit + startUnit;
-            showInUnit = this.getShowInWidthUnit(stream, startUnit, endUnit - 1 - widhtUnits);
+            showInUnit = this.getShowInWidthUnit(stream, startUnit, endUnit - widhtUnits);
             hasGap = showInUnit != startUnit;
         }
 
@@ -128,7 +130,7 @@ export class StreamPlatformField extends GameElementHandler {
         remainingWidhtUnits -= showInUnit;
         remainingWidhtUnits -= widhtUnits;
 
-        return [new Platform(x, y, width, StreamPlatformField.StreamHeight), remainingWidhtUnits, hasGap, doubleDay];
+        return [new StreamPlatform(stream, x, y, width, StreamPlatformField.StreamHeight), remainingWidhtUnits, hasGap, doubleDay];
     }
 
     isMorningStream(stream: Stream) {

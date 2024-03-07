@@ -1,11 +1,13 @@
 import { CollisionElement } from "./collision/collisionElement";
 import { GameElementState } from "./elements/gameElementState";
+import { RenderElement } from "./elements/renderElement";
 
 export class Platform extends CollisionElement {
     protected _y: number;
     protected _x: number;
     protected _height: number;
     protected _width: number;
+    protected _child: RenderElement | undefined;
     constructor(x: number, y: number, width: number, height: number) {
         super();
         this._x = x;
@@ -16,14 +18,14 @@ export class Platform extends CollisionElement {
 
     render(context: CanvasRenderingContext2D): void {
         context.beginPath();
-        context.rect(Math.round(this.x), Math.round(this.y), this._width, this._height);
-        context.fillStyle = "red";
+        context.roundRect(Math.round(this.x), Math.round(this.y), this._width, this._height, 20);
+        context.fillStyle = "#fff";
         context.fill();
         context.closePath();
     }
 
     state: GameElementState = GameElementState.Inactive;
-    calculateNextFrame(): void {
+    calculateNextFrame(): void { 
     }
 
 

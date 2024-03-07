@@ -10,6 +10,8 @@ export class GameField {
     private static BufferX = 50;
     private static YTranslationOffsetMultiplier = 0.25;
     private static CameraAcceleration = 10;
+    private static gradientStartColor = "#bca0b6";
+    private static gradientEndColor = "#e2d7dd";
     yTranslation = 0;
     nextYTranslation = 0;
     private readonly _elementHandler: GameElementHandler;
@@ -74,6 +76,7 @@ export class GameField {
         this._dev = dev;
         this._canvas = this._gameFrame.querySelector<HTMLCanvasElement>("canvas")!;
         this._context = this._canvas.getContext("2d");
+        this._context?.save();
         this._elementHandler = elementHandler;
 
         document.addEventListener("keypress", (ev) => {
@@ -85,7 +88,7 @@ export class GameField {
     }
 
     render(element: RenderElement) {
-        if(this._context != null && element.shouldRender(-GameField.BufferX, -(this.yTranslation + GameField.BufferY), this._canvas.width + GameField.BufferX, this._canvas.height + GameField.BufferY - this.yTranslation)) {
+        if(this._context != null && element.shouldRender(-GameField.BufferX, -(this.yTranslation + GameField.BufferY), this.width + GameField.BufferX, this.viewHeight + GameField.BufferY - this.yTranslation)) {
             element.render(this._context);
         }
     }
@@ -93,7 +96,7 @@ export class GameField {
     adjustSize(){ 
         const heightAdjustment = this._gameFrame.clientHeight - this._canvas.height;
         const widthAdjustment = this._gameFrame.clientWidth - this._canvas.width;
-        if(this._clearBeforeRender || widthAdjustment != 0) {
+        if(widthAdjustment != 0) {
             this._canvas.width = this._gameFrame.clientWidth;
         }
         if(heightAdjustment != 0) {
@@ -104,29 +107,46 @@ export class GameField {
 
     renderFrame() {
         this.translateScreen();
-        if(this._clearBeforeRender) {
-            this._context?.clearRect(0, 0, this._canvas.width, this._canvas.height);
+
+        if(this._context) {
+            const gradient = this._context.createLinearGradient(0, this._elementHandler.topY, 0, this.viewHeight); 
+            // Add three color stops
+            gradient.addColorStop(0, GameField.gradientStartColor);
+            gradient.addColorStop(1, GameField.gradientEndColor);
+            // Set the fill style and draw a rectangle
+            this._context.fillStyle = gradient;
+            this._context.fillRect(0, -Math.round(this.yTranslation), this.width, this.viewHeight);
         }
+        
         this._elementHandler.render(this);
     }
 
+    clearScreen() {
+        if(this._clearBeforeRender) {
+            this._context?.clearRect(-GameField.BufferX, -(Math.round(this.yTranslation) + GameField.BufferY), this.width + GameField.BufferX, this.viewHeight + GameField.BufferY);
+        }
+    }
+
     translateScreen() {
+        this._context?.translate(0, -Math.round(this.yTranslation));
         this.calcualteYTranslation();
         this.yTranslation -= this._cameraSpeed;
-        console.log(this.yTranslation);
-        this._context?.translate(0, Math.round(this.yTranslation));
+        const roundedYTranslation = Math.round(this.yTranslation);
+        this._context?.translate(0, roundedYTranslation);
         for (let index = 0; index < this._translateElements.length; index++) {
             const translateElement = this._translateElements[index];
-            translateElement.style.transform = `translate(0, ${this.yTranslation}px)`;
+            translateElement.style.transform = `translate(0, ${roundedYTranslation}px)`;
         }
     }
 
     addToTranslate(element: HTMLElement){
+        element.style.setProperty("--gradientStart", GameField.gradientStartColor);
+        element.style.setProperty("--gradientEnd", GameField.gradientEndColor);
         this._translateElements.push(element);
     }
 
     dispose() {
-        this._context?.clearRect(0, 0, this._canvas.width, this._canvas.height);
+        this.clearScreen();
     }
 
     follow(element: FocusElement){

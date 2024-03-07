@@ -5,37 +5,67 @@ body, html {
     height: 100%;
     width: 100%;
     display: flex;
+    font-family: Arial;
+    font-size: 30px;
   }
   canvas {
     background: #eee;
     display: block;
     margin: 0 auto;
+    border: 1px solid #81678e;
   }
 
   .main {
     flex-grow: 1;
     display: grid;
-    grid-template-columns: minmax(50px, 1fr) 1000px minmax(50px, 1fr);
+    grid-template-columns: minmax(50px, 1fr) 1000px;
     grid-template-rows: 100%;
     grid-template-areas: 
-    "left game right";
+    "left game";
   }
   
   .leftFrame {
     display: flex;
     flex-direction: column-reverse;
-    overflow-y: hidden;
+    overflow: hidden;
   }
 
   .dayContainer {
+    --gradientStart: #fff;
+    --gradientEnd: #fff;
     --dayHeight: 0px;
+    background: linear-gradient(var(--gradientStart), var(--gradientEnd));
     display: flex;
     flex-direction: column-reverse;
   }
 
-  .dayContainer span {
+  .dayContainer > span {
     height: var(--dayHeight);
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
   }
+
+  .dayContainer .date {
+    width: var(--platformHeight);
+    height: var(--platformHeight);
+    background-color: #c69eda;
+    color: #fff;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+.month {
+  border-bottom: 5px #81678e dotted;
+  width: 100%;
+  margin-bottom: 5px;
+  color: #81678e;
+  text-align: center;
+  text-transform: uppercase;
+}
 
   .game {
     overflow: hidden;

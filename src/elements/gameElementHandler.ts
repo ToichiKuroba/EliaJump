@@ -8,6 +8,11 @@ import { RenderElement } from "./renderElement";
 
 export class GameElementHandler extends MetaElement {
     private _elements: GameElement[] = [];
+    private _topY = 0;
+
+    get topY() {
+        return this._topY;
+    }
 
     handleResize(heightChange: number) {
         for (let index = this._elements.length - 1; index >= 0; index--) {
@@ -59,6 +64,12 @@ export class GameElementHandler extends MetaElement {
             } 
             else if(element.state == GameElementState.Removed) {
                 element.dispose();
+            }
+
+            if(element instanceof RenderElement && element.y < this._topY){
+                this._topY = element.y;
+            } else if(element instanceof GameElementHandler && element.topY < this._topY) {
+                this._topY = element._topY;
             }
         }
     }
