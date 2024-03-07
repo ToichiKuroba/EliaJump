@@ -23,6 +23,10 @@ body, html {
     grid-template-areas: 
     "left game";
   }
+
+  .resources {
+    display: none;
+  }
   
   .leftFrame {
     display: flex;

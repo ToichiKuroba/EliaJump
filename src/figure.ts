@@ -10,12 +10,17 @@ export class Figure extends MovingCollisionElement implements FocusElement {
     canSave() {
         return !this._isJumping && !this._isDoubleJumping;
     }
+
+    private _animationCyclePosition = 0;
+    private static AnimationCycleLength = 40;
+    private static DefaultHeight = 72;
     protected _speedX: number = 0;
     protected _speedY: number = 0;
     protected _y: number;
     protected _x: number;
-    protected _width = 50;
-    protected _height = 50;
+    protected _width = 72;
+    protected _imageWidth = 111;
+    protected _height = Figure.DefaultHeight;
     private static FullJumpLoadTime = 1000;
     private static SmallJumpStrength = 10;
     private static MediumJumpStrength = 50;
@@ -159,6 +164,7 @@ export class Figure extends MovingCollisionElement implements FocusElement {
     keyUp(ev: KeyboardEvent) {
         if (!this._isJumping) {
             if ((ev.key == 'a' || ev.key == 'w' || ev.key == 'd') && this._spaceTimer.isRunning) {
+                document.querySelector<HTMLAudioElement>("#jump")?.play();
                 this._spaceTimer.Stop();
                 this._jumpStartTime = Date.now();
                 this._isJumping = true;
@@ -195,19 +201,39 @@ export class Figure extends MovingCollisionElement implements FocusElement {
     }
 
     render(context: CanvasRenderingContext2D): void {
-        context.beginPath();
-        context.rect(Math.round(this.x), Math.round(this.y), this._width, this._height);
+        const defaultImage = document.querySelector<HTMLImageElement>('.defaultImage');
+        const wingsUpImage = document.querySelector<HTMLImageElement>('.wingsUpImage');
+        const wingsDownImage = document.querySelector<HTMLImageElement>('.wingsDownImage');
         const jumpStrength = this.ApproximateJumpStrength(100 * (this._spaceTimer.millseconds / Figure.FullJumpLoadTime));
-        if (jumpStrength <= Figure.SmallJumpStrength) {
-            context.fillStyle = "blue";
+        let height = this._height -5;
+        let y = Math.round(this.y);
+        if (jumpStrength <= Figure.SmallJumpStrength || this._isJumping) {
         }
         else if (jumpStrength <= Figure.MediumJumpStrength) {
-            context.fillStyle = "lightblue"
+            height = height / 1.25;
         } else if (jumpStrength <= Figure.FullJumpStrength) {
-            context.fillStyle = "violet"
+            height = height / 1.5;
         }
-        context.fill();
-        context.closePath();
+        
+        y = y + (this.height - height);
+        const x = Math.round(this.x) - (this._imageWidth - this._width) / 2;
+        if(defaultImage) {
+            const animationStepLength = Figure.AnimationCycleLength / 4;
+            let image = defaultImage;
+            if(this._animationCyclePosition >= animationStepLength && this._animationCyclePosition < animationStepLength * 2) {
+                image = wingsUpImage ?? defaultImage;
+            }else if(this._animationCyclePosition >= animationStepLength * 3 && this._animationCyclePosition < animationStepLength * 4) {
+                image = wingsDownImage ?? defaultImage;
+            }else if(this._animationCyclePosition > Figure.AnimationCycleLength) {
+                this._animationCyclePosition = 0;
+            }
+
+            context.drawImage(image, x, y, this._imageWidth, height);    
+
+            if(this._isJumping || this._isDoubleJumping) {
+                this._animationCyclePosition++;
+            }
+        }
     }
 
     state: GameElementState = GameElementState.Active;
