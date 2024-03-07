@@ -1,6 +1,20 @@
 {
     "LiveStreams": [
         {
+            "VideoLink": "https://www.youtube.com/watch?v=IYct3pjIL48",
+            "Title": "I have a letter for you 💌 ✨ 【 Mini Debut】",
+            "PublishedAt": "2023-04-14T21:00:53Z",
+            "Length": "PT1H18M35S",
+            "LiveStreamDate": "2023-04-14T21:00:53Z"
+        },
+        {
+            "VideoLink": "https://www.youtube.com/watch?v=EfTlto5jqKg",
+            "Title": "Let's talk about my magic banana【 Zatsudan/Dono Reading】",
+            "PublishedAt": "2023-04-16T09:00:53Z",
+            "Length": "PT7H01M21S",
+            "LiveStreamDate": "2023-04-16T09:00:53Z"
+        },
+        {
             "VideoLink": "https://www.youtube.com/watch?v=iWLOHjyuhEM",
             "Title": "Samurai goes to Magic School【Elden Ring】",
             "PublishedAt": "2024-02-02T23:28:48Z",

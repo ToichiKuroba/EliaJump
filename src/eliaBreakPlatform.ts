@@ -41,8 +41,11 @@ export class EliaBreakPlatform extends Platform {
         context.fillStyle = "#000";  
         context.font = fontSize + "px arial";
         context.textAlign = "center";
-        context.fillText("ELIA", this.x + this._width /2, this.y + 10 + paddingTopBottom, this._width);
-        context.fillText("BREAK", this.x + this._width /2, this.y + 10 + paddingTopBottom + fontSize + 5, this._width);
+        context.fillText("ELIA", this.x + this._width /2, this.y + 10 + paddingTopBottom, this._width - 10);
+        context.fillText("BREAK", this.x + this._width /2, this.y + 10 + paddingTopBottom + fontSize + 5, this._width - 10);
+        context.font = fontSize * 2 + "px arial";
+        context.fillText("🎉", this.x + 20, this.y + 20 + paddingTopBottom);
+        context.fillText("🎉", this.x + this._width - 20, this.y + 20 + paddingTopBottom);
         context.restore();
     }
 }
