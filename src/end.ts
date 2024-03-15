@@ -2,6 +2,10 @@ import { GameElementState } from "./elements/gameElementState";
 import { RenderElement } from "./elements/renderElement";
 
 export class End extends RenderElement {
+    get width(): number {
+        return 0;
+    }
+
     protected _y: number;
     protected _x: number;
 

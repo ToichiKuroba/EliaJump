@@ -1,7 +1,10 @@
+import { CollisionV2 } from "./collision/collision";
+import { CollisionType } from "./collision/collisionType";
+import { MovingCollisionElement } from "./collision/movingCollisionElement";
 import { GameElementState } from "./elements/gameElementState";
 import { Platform } from "./platform";
 
-export class EliaBreakPlatform extends Platform {
+export class EliaBreakPlatform extends Platform implements MovingCollisionElement {
     private static speed = 5;
     private readonly _startY: number;
     private readonly _endY: number;
@@ -14,6 +17,27 @@ export class EliaBreakPlatform extends Platform {
         super(x, startY, width, height);
         this._startY = startY;
         this._endY = endY;
+    }
+    get speedX(): number {
+        return 0;
+    }
+    get speedY(): number {
+        return EliaBreakPlatform.speed * this._direction;
+    }
+    get wantsTofixCollision(): boolean {
+        return false;
+    }
+    fixCollision(collision: CollisionV2): void {
+        if(collision.type == CollisionType.Ignore) {
+            return;
+        }
+
+        this._x = collision.contactX;
+        this._y = collision.contactY;
+
+        if(collision.type == CollisionType.Horizontal) {
+            this._direction = -this._direction;
+        }
     }
 
     calculateNextFrame(): void {

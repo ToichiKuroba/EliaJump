@@ -1,8 +1,11 @@
-import { CollisionElement } from "./collision/collisionElement";
 import { GameElementState } from "./elements/gameElementState";
 import { RenderElement } from "./elements/renderElement";
 
-export class Platform extends CollisionElement {
+export class Platform extends RenderElement {
+    get canCollide(): boolean {
+        return true;
+    }
+
     protected _y: number;
     protected _x: number;
     protected _height: number;
@@ -14,6 +17,14 @@ export class Platform extends CollisionElement {
         this._y = y;
         this._width = width;
         this._height = height;
+    }
+
+    get width(): number {
+        return this._width;
+    }
+
+    get height(): number {
+        return this._height;
     }
 
     render(context: CanvasRenderingContext2D): void {

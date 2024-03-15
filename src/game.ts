@@ -5,7 +5,7 @@ import { AddedElementEvent, GameElementEvent } from "./elements/gameElementEvent
 import { Figure } from "./figure";
 import { PlatformField } from "./platformField";
 import { GameField } from "./gameFlied";
-import { CollisionElement } from "./collision/collisionElement";
+import { isCollisionElement } from "./collision/collisionElement";
 import { StreamPlatformField } from "./streamPlatformField"; 
 import { SavePointHandler } from "./savePointHandler";
 
@@ -37,14 +37,14 @@ class Game {
 
     handleElementAdded = (ev: AddedElementEvent) => {
         console.log("Element Added");
-        if(ev.element instanceof CollisionElement) {
+        if(isCollisionElement(ev.element)) {
             this.collisionHandler.add(ev.element);
         }
     }
 
     handleElementRemoved = (ev: GameElementEvent<"Removed">) => {
         console.log("Element Removed");
-        if(ev.sender instanceof CollisionElement) {
+        if(isCollisionElement(ev.sender)) {
             this.collisionHandler.removeElement(ev.sender);
         }
     }
@@ -60,10 +60,18 @@ class Game {
         this._isRunning = true;
         this.frameInterval = setInterval(() => {
             this._gameField.adjustSize();
+            let startTime = Date.now();
             this.elementHandler.calculateNextFrame();
+            console.log(`Calculate took: ${startTime - Date.now()}ms`);
+            startTime = Date.now();
             this._savePointHandler?.checkSavePoint();
+            console.log(`SavePoint took: ${startTime - Date.now()}ms`);
+            startTime = Date.now();
             this.collisionHandler.detectCollisions();
+            console.log(`Collision took: ${startTime - Date.now()}ms`);
+            startTime = Date.now();
             this._gameField.renderFrame();
+            console.log(`Render took: ${startTime - Date.now()}ms`);
         }, 10);
 
         this.RunGame();

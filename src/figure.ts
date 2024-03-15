@@ -2,13 +2,20 @@ import { CollisionV2 } from "./collision/collision";
 import { CollisionType } from "./collision/collisionType";
 import { MovingCollisionElement } from "./collision/movingCollisionElement";
 import { GameElementState } from "./elements/gameElementState";
+import { RenderElement } from "./elements/renderElement";
 import { SavePoint } from "./savePoint";
 import { FocusElement } from "./util/focusElement";
 import { Timer } from "./util/timer";
 
-export class Figure extends MovingCollisionElement implements FocusElement {
+export class Figure extends RenderElement implements FocusElement, MovingCollisionElement {
+    get height(): number {
+        return this._height;
+    }
     canSave() {
         return !this._isJumping && !this._isDoubleJumping;
+    }
+    get canCollide(): boolean {
+        return true;
     }
 
     private _animationCyclePosition = 0;
@@ -49,6 +56,18 @@ export class Figure extends MovingCollisionElement implements FocusElement {
         this._dev = dev;
         document.addEventListener("keydown", (ev) => this.keyDown(ev));
         document.addEventListener("keyup", ev => this.keyUp(ev));
+    }
+    get speedX(): number {
+        return this._speedX;
+    }
+    get speedY(): number {
+        return this._speedY;
+    }
+    get wantsTofixCollision(): boolean {
+        return true;
+    }
+    get width(): number {
+        return this._width;
     }
 
     canFocus(): boolean {
@@ -97,6 +116,7 @@ export class Figure extends MovingCollisionElement implements FocusElement {
 
 
     keyDown(ev: KeyboardEvent) {
+        console.log("key down");
         if (!this._isJumping && !this._isDoubleJumping) {
             if (ev.key == 'w' && !this._spaceTimer.isRunning) {
                 this._direction = 0;
@@ -162,6 +182,7 @@ export class Figure extends MovingCollisionElement implements FocusElement {
     }
 
     keyUp(ev: KeyboardEvent) {
+        console.log("key up");
         if (!this._isJumping) {
             if ((ev.key == 'a' || ev.key == 'w' || ev.key == 'd') && this._spaceTimer.isRunning) {
                 document.querySelector<HTMLAudioElement>("#jump")?.play();
@@ -269,7 +290,8 @@ export class Figure extends MovingCollisionElement implements FocusElement {
                 this._jumpStrengthX = this._jumpStrengthX / 1.25;
             }
         }else if(!this._isDoubleJumping && !this._ignoreGravity) {
-            this._y += Figure.MaxFallSpeed;
+            this._speedY = Figure.MaxFallSpeed;
+            this._y += this._speedY;
         }
     }
 
@@ -323,7 +345,7 @@ export class Figure extends MovingCollisionElement implements FocusElement {
     }
 
     fixCollision(collision: CollisionV2): void {
-        if (this._ignoreCollision) {
+        if (this._ignoreCollision || collision.type == CollisionType.Ignore) {
             return;
         }
 
@@ -334,7 +356,7 @@ export class Figure extends MovingCollisionElement implements FocusElement {
         }
 
         if (collision.type == CollisionType.Horizontal) {
-            if (this._speedY > 0) {
+            if (this._speedY > 0 && this._isJumping) {
                 this.endJump();
             } else if (this._speedY < 0) {
                 const nowTimeStamp = this._calculationTimeStamp;
