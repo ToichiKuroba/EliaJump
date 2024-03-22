@@ -1,7 +1,7 @@
 import { GameElementState } from "./elements/gameElementState";
-import { RenderElement } from "./elements/renderElement";
+import { RenderElementImpl } from "./elements/renderElement";
 
-export class End extends RenderElement {
+export class End extends RenderElementImpl {
     get width(): number {
         return 0;
     }

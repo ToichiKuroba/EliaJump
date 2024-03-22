@@ -1,7 +1,12 @@
 import { CollisionElement } from "../collision/collisionElement";
-import { DefaultGameElement } from "./gameElement";
+import { DefaultGameElement, GameElement } from "./gameElement";
+import { RenderPrio } from "./renderPrio";
 
-export abstract class RenderElement extends DefaultGameElement implements CollisionElement{
+export abstract class RenderElementImpl extends DefaultGameElement implements RenderElement{
+    get renderPrio(): RenderPrio {
+        return RenderPrio.normal;
+    }
+
     get canCollide(): boolean {
         return false;
     }
@@ -22,4 +27,17 @@ export abstract class RenderElement extends DefaultGameElement implements Collis
     shouldRender(renderAreaXStart: number, renderAreaYStart: number, renderAreaXEnd: number, renderAreaYEnd: number) {
         return this._x >= renderAreaXStart && this._x <= renderAreaXEnd && this._y >= renderAreaYStart && this._y <= renderAreaYEnd;
     }
+}
+
+export function isRenderElement(element : GameElement | RenderElement) : element is RenderElement {
+    return typeof (element as RenderElement).render == "function"; 
+}
+
+export interface RenderElement extends CollisionElement {
+    get x(): number;
+    get y(): number;
+    handleResize(heightChange: number):void;
+    render(context: CanvasRenderingContext2D) : void;
+    shouldRender(renderAreaXStart: number, renderAreaYStart: number, renderAreaXEnd: number, renderAreaYEnd: number) : boolean;
+    get renderPrio(): RenderPrio
 }

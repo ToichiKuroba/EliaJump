@@ -1,7 +1,7 @@
-import { GameElementState } from "./elements/gameElementState";
-import { RenderElement } from "./elements/renderElement";
+import { GameElementState } from "../elements/gameElementState";
+import { RenderElement, RenderElementImpl } from "../elements/renderElement";
 
-export class Platform extends RenderElement {
+export class Platform extends RenderElementImpl {
     get canCollide(): boolean {
         return true;
     }
@@ -29,7 +29,7 @@ export class Platform extends RenderElement {
 
     render(context: CanvasRenderingContext2D): void {
         context.beginPath();
-        context.roundRect(Math.round(this.x), Math.round(this.y), this._width, this._height, 20);
+        context.roundRect(Math.round(this.x), Math.round(this._y), this._width, this._height, 20);
         context.fillStyle = "#fff";
         context.fill();
         context.closePath();

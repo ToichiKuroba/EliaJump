@@ -1,7 +1,7 @@
-import { CollisionV2 } from "./collision/collision";
-import { CollisionType } from "./collision/collisionType";
-import { MovingCollisionElement } from "./collision/movingCollisionElement";
-import { GameElementState } from "./elements/gameElementState";
+import { CollisionV2 } from "../collision/collision";
+import { CollisionType } from "../collision/collisionType";
+import { MovingCollisionElement } from "../collision/movingCollisionElement";
+import { GameElementState } from "../elements/gameElementState";
 import { Platform } from "./platform";
 
 export class EliaBreakPlatform extends Platform implements MovingCollisionElement {
@@ -65,11 +65,11 @@ export class EliaBreakPlatform extends Platform implements MovingCollisionElemen
         context.fillStyle = "#000";  
         context.font = fontSize + "px arial";
         context.textAlign = "center";
-        context.fillText("ELIA", this.x + this._width /2, this.y + 10 + paddingTopBottom, this._width - 10);
-        context.fillText("BREAK", this.x + this._width /2, this.y + 10 + paddingTopBottom + fontSize + 5, this._width - 10);
+        context.fillText("ELIA", this.x + this._width /2, this._y + 10 + paddingTopBottom, this._width - 10);
+        context.fillText("BREAK", this.x + this._width /2, this._y + 10 + paddingTopBottom + fontSize + 5, this._width - 10);
         context.font = fontSize * 2 + "px arial";
-        context.fillText("🎉", this.x + 20, this.y + 20 + paddingTopBottom);
-        context.fillText("🎉", this.x + this._width - 20, this.y + 20 + paddingTopBottom);
+        context.fillText("🎉", this.x + 20, this._y + 20 + paddingTopBottom);
+        context.fillText("🎉", this.x + this._width - 20, this._y + 20 + paddingTopBottom);
         context.restore();
     }
 }

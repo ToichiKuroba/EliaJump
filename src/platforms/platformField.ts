@@ -1,4 +1,4 @@
-import { GameElementHandler } from "./elements/gameElementHandler";
+import { GameElementHandler } from "../elements/gameElementHandler";
 import { Platform } from "./platform";
 
 export class PlatformField extends GameElementHandler {

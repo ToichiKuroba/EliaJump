@@ -2,12 +2,17 @@ import { CollisionV2 } from "./collision/collision";
 import { CollisionType } from "./collision/collisionType";
 import { MovingCollisionElement } from "./collision/movingCollisionElement";
 import { GameElementState } from "./elements/gameElementState";
-import { RenderElement } from "./elements/renderElement";
+import { RenderElementImpl } from "./elements/renderElement";
+import { RenderPrio } from "./elements/renderPrio";
 import { SavePoint } from "./savePoint";
 import { FocusElement } from "./util/focusElement";
 import { Timer } from "./util/timer";
 
-export class Figure extends RenderElement implements FocusElement, MovingCollisionElement {
+export class Figure extends RenderElementImpl implements FocusElement, MovingCollisionElement {
+    get renderPrio(): RenderPrio {
+        return RenderPrio.hight;
+    }
+
     get height(): number {
         return this._height;
     }
@@ -227,7 +232,7 @@ export class Figure extends RenderElement implements FocusElement, MovingCollisi
         const wingsDownImage = document.querySelector<HTMLImageElement>('.wingsDownImage');
         const jumpStrength = this.ApproximateJumpStrength(100 * (this._spaceTimer.millseconds / Figure.FullJumpLoadTime));
         let height = this._height -5;
-        let y = Math.round(this.y);
+        let y = Math.round(this._y);
         if (jumpStrength <= Figure.SmallJumpStrength || this._isJumping) {
         }
         else if (jumpStrength <= Figure.MediumJumpStrength) {

@@ -1,5 +1,5 @@
 import { Platform } from "./platform";
-import { Stream } from "./util/stream";
+import { Stream } from "../util/stream";
 
 export class StreamPlatform extends Platform {
     private _stream: Stream;

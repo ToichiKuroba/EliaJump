@@ -1,16 +1,17 @@
-import { Day } from "./day";
-import { GameElementHandler } from "./elements/gameElementHandler";
+import { Day } from "../day";
+import { GameElementHandler } from "../elements/gameElementHandler";
 import { EliaBreakPlatform } from "./eliaBreakPlatform";
-import { End } from "./end";
-import { Figure } from "./figure";
+import { End } from "../end";
+import { Figure } from "../figure";
 import { Platform } from "./platform";
-import { SavePoint } from "./savePoint";
-import { SavePointProvider } from "./savePointProvider";
+import { SavePoint } from "../savePoint";
+import { SavePointProvider } from "../savePointProvider";
 import { StreamPlatform } from "./streamPlatform";
-import { platformsConfig } from "./util/platformsConfig";
-import { Stream } from "./util/stream";
+import { platformsConfig } from "../util/platformsConfig";
+import { Stream } from "../util/stream";
 import { parse, toSeconds } from "iso8601-duration";
 import prand from 'pure-rand';
+import { SavePointPlatform } from "./savePointPlatform";
 
 export class StreamPlatformField extends GameElementHandler implements SavePointProvider {
     private static BaseSeed = 3948951295.589653;
@@ -103,13 +104,16 @@ export class StreamPlatformField extends GameElementHandler implements SavePoint
                 for (let streamIndex = 0; streams && streamIndex < streams.length; streamIndex++) {
                     const stream = streams.sort((streamA, streamB) => streamA.liveStreamDate.getTime() - streamB.liveStreamDate.getTime())[streamIndex];              
                     let platform : Platform;    
-                    [platform, remainingWidhtUnits, hasGap, doubleDay] =this.convertStreamIntoPlatforms(stream, currentY,remainingWidhtUnits, hasGap, doubleDay)
-                    this.add(platform);
+                    [platform, remainingWidhtUnits, hasGap, doubleDay] =this.convertStreamIntoPlatforms(stream, currentY,remainingWidhtUnits, hasGap, doubleDay);
 
                     
                     if(day.date.getMonth() != lastSavePointMonth) {
-                        this.savePoints.push(new SavePoint(platform.x, platform.y));
+                        let savePointPlatform = new SavePointPlatform(platform);
+                        this.add(savePointPlatform);
+                        this.savePoints.push(new SavePoint(stream.videoLink, savePointPlatform));
                         lastSavePointMonth = day.date.getMonth();
+                    }else {
+                        this.add(platform);
                     }
                 }
                 currentY -= rowHeight * doubleDay;

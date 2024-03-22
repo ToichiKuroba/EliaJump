@@ -3,10 +3,10 @@ import "./game.css";
 import { GameElementHandler } from "./elements/gameElementHandler";
 import { AddedElementEvent, GameElementEvent } from "./elements/gameElementEventMap";
 import { Figure } from "./figure";
-import { PlatformField } from "./platformField";
+import { PlatformField } from "./platforms/platformField";
 import { GameField } from "./gameFlied";
 import { isCollisionElement } from "./collision/collisionElement";
-import { StreamPlatformField } from "./streamPlatformField"; 
+import { StreamPlatformField } from "./platforms/streamPlatformField"; 
 import { SavePointHandler } from "./savePointHandler";
 
 function Init() {
