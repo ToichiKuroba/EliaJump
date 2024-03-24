@@ -1,3 +1,4 @@
+import { FigureAnimation } from "./animation/figureAnimation";
 import { CollisionV2 } from "./collision/collision";
 import { CollisionType } from "./collision/collisionType";
 import { MovingCollisionElement } from "./collision/movingCollisionElement";
@@ -9,6 +10,7 @@ import { FocusElement } from "./util/focusElement";
 import { Timer } from "./util/timer";
 
 export class Figure extends RenderElementImpl implements FocusElement, MovingCollisionElement {
+    private _animation: FigureAnimation;
     get renderPrio(): RenderPrio {
         return RenderPrio.hight;
     }
@@ -23,16 +25,12 @@ export class Figure extends RenderElementImpl implements FocusElement, MovingCol
         return true;
     }
 
-    private _animationCyclePosition = 0;
-    private static AnimationCycleLength = 40;
-    private static DefaultHeight = 72;
     protected _speedX: number = 0;
     protected _speedY: number = 0;
     protected _y: number;
     protected _x: number;
     protected _width = 72;
-    protected _imageWidth = 111;
-    protected _height = Figure.DefaultHeight;
+    protected _height = 72;
     private static FullJumpLoadTime = 1000;
     private static SmallJumpStrength = 10;
     private static MediumJumpStrength = 50;
@@ -54,8 +52,9 @@ export class Figure extends RenderElementImpl implements FocusElement, MovingCol
     private _isDoubleJumping = false;
     private _direction = 0;
     private _ignoreCollision = false;
-    constructor(x: number, y: number, dev: boolean = false) {
+    constructor(x: number, y: number, figureAnimation: FigureAnimation, dev: boolean = false) {
         super();
+        this._animation = figureAnimation;
         this._x = x;
         this._y = y;
         this._dev = dev;
@@ -162,7 +161,7 @@ export class Figure extends RenderElementImpl implements FocusElement, MovingCol
 
         if (this._dev) {
             const devSpeed = ev.shiftKey ? 100 : ev.ctrlKey ? 1 : 10;
-            if (ev.key == 'ArrowLeft' || ev.key == 'ArrowRight' || ev.key == "ArrowUp" || ev.key == "ArrowDown") { 
+            if (ev.key == 'ArrowLeft' || ev.key == 'ArrowRight' || ev.key == "ArrowUp" || ev.key == "ArrowDown") {
                 this._ignoreCollision = true;
                 this._ignoreGravity = true;
                 this.endJump();
@@ -191,6 +190,7 @@ export class Figure extends RenderElementImpl implements FocusElement, MovingCol
         if (!this._isJumping) {
             if ((ev.key == 'a' || ev.key == 'w' || ev.key == 'd') && this._spaceTimer.isRunning) {
                 document.querySelector<HTMLAudioElement>("#jump")?.play();
+                this._animation.start();
                 this._spaceTimer.Stop();
                 this._jumpStartTime = Date.now();
                 this._isJumping = true;
@@ -227,39 +227,18 @@ export class Figure extends RenderElementImpl implements FocusElement, MovingCol
     }
 
     render(context: CanvasRenderingContext2D): void {
-        const defaultImage = document.querySelector<HTMLImageElement>('.defaultImage');
-        const wingsUpImage = document.querySelector<HTMLImageElement>('.wingsUpImage');
-        const wingsDownImage = document.querySelector<HTMLImageElement>('.wingsDownImage');
         const jumpStrength = this.ApproximateJumpStrength(100 * (this._spaceTimer.millseconds / Figure.FullJumpLoadTime));
-        let height = this._height -5;
-        let y = Math.round(this._y);
-        if (jumpStrength <= Figure.SmallJumpStrength || this._isJumping) {
-        }
-        else if (jumpStrength <= Figure.MediumJumpStrength) {
-            height = height / 1.25;
-        } else if (jumpStrength <= Figure.FullJumpStrength) {
-            height = height / 1.5;
-        }
-        
-        y = y + (this.height - height);
-        const x = Math.round(this.x) - (this._imageWidth - this._width) / 2;
-        if(defaultImage) {
-            const animationStepLength = Figure.AnimationCycleLength / 4;
-            let image = defaultImage;
-            if(this._animationCyclePosition >= animationStepLength && this._animationCyclePosition < animationStepLength * 2) {
-                image = wingsUpImage ?? defaultImage;
-            }else if(this._animationCyclePosition >= animationStepLength * 3 && this._animationCyclePosition < animationStepLength * 4) {
-                image = wingsDownImage ?? defaultImage;
-            }else if(this._animationCyclePosition > Figure.AnimationCycleLength) {
-                this._animationCyclePosition = 0;
-            }
-
-            context.drawImage(image, x, y, this._imageWidth, height);    
-
-            if(this._isJumping || this._isDoubleJumping) {
-                this._animationCyclePosition++;
-            }
-        }
+        const isLoadingJump = jumpStrength > Figure.SmallJumpStrength && !this._isJumping;
+        const isLoadingFullJump = isLoadingJump && jumpStrength > Figure.MediumJumpStrength;
+        this._animation.renderNextFrame(context, {
+            isLoadingJump, 
+            isLoadingFullJump, 
+            jumpDirection: this._direction,
+            x: Math.round(this.x), 
+            y: Math.round(this.y), 
+            width: this.width, 
+            height: this.height
+        });
     }
 
     state: GameElementState = GameElementState.Active;
@@ -288,13 +267,13 @@ export class Figure extends RenderElementImpl implements FocusElement, MovingCol
             this._x += this._speedX;
             this._y += this._speedY;
 
-            if(this._speedY > Figure.MaxFallSpeed) {
+            if (this._speedY > Figure.MaxFallSpeed) {
                 this._calculationSpeed = Figure.MaxFallSpeed / this._speedY;
             } else if (this._speedY > 0 && this._calculationSpeed >= 1 && this._jumpStrengthX != Figure.SmallJumpStrength) {
                 this._calculationSpeed = (this._jumpStrengthX / 1.25) / this._jumpStrengthX;
                 this._jumpStrengthX = this._jumpStrengthX / 1.25;
             }
-        }else if(!this._isDoubleJumping && !this._ignoreGravity) {
+        } else if (!this._isDoubleJumping && !this._ignoreGravity) {
             this._speedY = Figure.MaxFallSpeed;
             this._y += this._speedY;
         }
@@ -363,6 +342,7 @@ export class Figure extends RenderElementImpl implements FocusElement, MovingCol
         if (collision.type == CollisionType.Horizontal) {
             if (this._speedY > 0 && this._isJumping) {
                 this.endJump();
+                this._animation.stop();
             } else if (this._speedY < 0) {
                 const nowTimeStamp = this._calculationTimeStamp;
                 const jumpedTime = nowTimeStamp - this._jumpStartTime;
@@ -376,7 +356,7 @@ export class Figure extends RenderElementImpl implements FocusElement, MovingCol
                     if (this._speedY > 0 && this._calculationSpeed >= 1 && this._jumpStrengthX != Figure.SmallJumpStrength) {
                         this._calculationSpeed = (this._jumpStrengthX / 1.25) / this._jumpStrengthX;
                         this._jumpStrengthX = this._jumpStrengthX / 1.25;
-        
+
                     }
                 }
             }

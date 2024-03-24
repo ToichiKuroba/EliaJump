@@ -8,6 +8,7 @@ import { GameField } from "./gameFlied";
 import { isCollisionElement } from "./collision/collisionElement";
 import { StreamPlatformField } from "./platforms/streamPlatformField"; 
 import { SavePointHandler } from "./savePointHandler";
+import { StarlingAnimation } from "./animation/starlingAnimation";
 
 function Init() {
     if (document.readyState == "complete") {
@@ -60,18 +61,10 @@ class Game {
         this._isRunning = true;
         this.frameInterval = setInterval(() => {
             this._gameField.adjustSize();
-            let startTime = Date.now();
             this.elementHandler.calculateNextFrame();
-            console.log(`Calculate took: ${startTime - Date.now()}ms`);
-            startTime = Date.now();
             this._savePointHandler?.checkSavePoint();
-            console.log(`SavePoint took: ${startTime - Date.now()}ms`);
-            startTime = Date.now();
             this.collisionHandler.detectCollisions();
-            console.log(`Collision took: ${startTime - Date.now()}ms`);
-            startTime = Date.now();
             this._gameField.renderFrame();
-            console.log(`Render took: ${startTime - Date.now()}ms`);
         }, 10);
 
         this.RunGame();
@@ -94,7 +87,7 @@ class Game {
 
     private RunGame() {
         let streamPlatform: StreamPlatformField | undefined;
-        const player = new Figure(0, this._gameField.bottom - 50, this._dev);
+        const player = new Figure(0, this._gameField.bottom - 50, new StarlingAnimation(), this._dev);
         this._gameField.follow(player);
         this.elementHandler.add(player);
         const dayContainer = document.querySelector<HTMLElement>(".dayContainer");
