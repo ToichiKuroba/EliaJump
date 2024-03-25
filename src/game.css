@@ -19,11 +19,13 @@ body, html {
   .main {
     flex-grow: 1;
     display: grid;
-    grid-template-columns: minmax(50px, 1fr) 1000px;
+    grid-template-columns: 1fr min-content 1000px 1fr;
     grid-template-rows: 100%;
     grid-template-areas: 
-    "left game";
+    ". left game .";
   }
+
+  
 
   .controlls {
     position: absolute;
@@ -38,6 +40,7 @@ body, html {
     display: flex;
     flex-direction: column-reverse;
     overflow: hidden;
+    grid-area: left;
   }
 
   .dayContainer {
@@ -80,4 +83,5 @@ body, html {
 
   .game {
     overflow: hidden;
+    grid-area: game;
   }

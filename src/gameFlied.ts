@@ -2,6 +2,8 @@ import { GameElementHandler } from "./elements/gameElementHandler";
 import { RenderElement } from "./elements/renderElement";
 import { FocusElement } from "./util/focusElement";
 
+export type ResizeCallback = (heightChange: number) => void;
+
 export class GameField {
     private readonly _canvas: HTMLCanvasElement;
     private readonly _gameFrame: HTMLElement;
@@ -19,6 +21,7 @@ export class GameField {
     private readonly _dev: boolean;
     private _clearBeforeRender: boolean = true;
     private _translateElements: HTMLElement[] = [];
+    private _resizeCallbacks: (ResizeCallback | null)[] = [];
     get bottom() {
         return this._canvas.height;
     }
@@ -41,6 +44,14 @@ export class GameField {
 
     private get _cameraSpeed() {
         return this._nextYTranslationDistance / GameField.CameraAcceleration;
+    }
+
+    addResizeCallback(callback: ResizeCallback) : () => void {
+        const newIndex = this._resizeCallbacks.length;
+        this._resizeCallbacks.push(callback);
+        return () => {
+            this._resizeCallbacks[newIndex] = null;
+        }
     }
 
     private centerOnFollowObject() {
@@ -102,6 +113,13 @@ export class GameField {
         if(heightAdjustment != 0) {
             this._canvas.height = this._gameFrame.clientHeight;
             this._elementHandler.handleResize(heightAdjustment);
+            this._context?.translate(0, Math.round(this.yTranslation));
+            for (let index = 0; index < this._resizeCallbacks.length; index++) {
+                const callback = this._resizeCallbacks[index];
+                if(callback != null) {
+                    callback(heightAdjustment);
+                }
+            }
         }
     }
 

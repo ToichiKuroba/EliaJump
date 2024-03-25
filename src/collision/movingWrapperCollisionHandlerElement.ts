@@ -24,14 +24,6 @@ export class MovingWrapperCollisionHandlerElement extends WrapperCollisionHandle
         return new AxisLine(this.yAxisLine.minPoint - this._element.speedY, this.yAxisLine.maxPoint - this._element.speedY);
     }
 
-    private calculateCollidingYPixels(element: CollisionHandlerElement) {
-        return this.calculateCollidingPixels(this._element.speedY, this.yAxisLine, element.yAxisLine);
-    }
-
-    private calculateCollidingXPixels(element: CollisionHandlerElement) {
-        return this.calculateCollidingPixels(this._element.speedX, this.xAxisLine, element.xAxisLine);
-    }
-
     private calculateCollidingPixels(speed: number, axisLine: AxisLine, referenceAxisLine: AxisLine) {
         if(speed == 0) {
             return 0;
@@ -69,103 +61,6 @@ export class MovingWrapperCollisionHandlerElement extends WrapperCollisionHandle
 
         return toMinX;
     }
-
-    calculateCollisionOld(element: CollisionHandlerElement): CollisionV2 {
-        let collisionType: CollisionType; 
-        let collidingYPixels = 0;
-        let collidingXPixels = 0;
-
-        if(this._element.speedX == 0 && this._element.speedY == 0) {
-            const distanceToContactY = this.findContactY(element);
-            const distanceToContactX = this.findContactX(element);
-            let contactY = this._element.y;
-            let contactX = this._element.x;
-
-            if(Math.abs(distanceToContactY) < Math.abs(distanceToContactX) || (distanceToContactY < 0 && Math.abs(distanceToContactY) < Math.abs(distanceToContactX) * 2)) {
-                contactY += distanceToContactY;
-                collisionType = CollisionType.Horizontal;
-                
-            }else {
-                contactX += distanceToContactX;
-                collisionType = CollisionType.Verticle
-            }
-
-            return {
-                contactY,
-                contactX,
-                type : collisionType,
-                timeOfContact: 0,
-            }
-        }
-
-        if(this._element.speedX == 0 || 
-            (this._prevXAxisLine.isFullyInside(element.xAxisLine) && 
-            this.xAxisLine.isFullyInside(element.xAxisLine))) {
-            collisionType = CollisionType.Horizontal;
-            collidingYPixels = this.calculateCollidingYPixels(element);
-        } else if(this._element.speedY == 0 || (this._prevYAxisLine.isFullyInside(element.yAxisLine) && 
-                                        this.yAxisLine.isFullyInside(element.yAxisLine))){
-            collisionType = CollisionType.Verticle;
-            collidingXPixels = this.calculateCollidingXPixels(element);
-        }
-        else if(this._element.speedY != 0 && this._element.speedX != 0) {
-            collidingYPixels = this.calculateCollidingYPixels(element);
-            collidingXPixels = this.calculateCollidingXPixels(element);
-            if (collidingYPixels / this._element.speedY > collidingXPixels / this._element.speedX ) {
-                collisionType = CollisionType.Horizontal;
-            } else if (collidingYPixels / this._element.speedY < collidingXPixels / this._element.speedX) {
-                collisionType = CollisionType.Verticle;
-            }
-            else {
-                //Here goes juice special logic for the perfect corner.
-                collisionType = CollisionType.Verticle;
-                if (this._element.speedY > 0) {
-                    collisionType = CollisionType.Horizontal;
-                }
-            }
-        }else {
-            collisionType = CollisionType.Verticle;
-        }
-
-        let contactY;
-        let contactX;
-        let timeOfContact;
-        if (collisionType == CollisionType.Horizontal) {
-            let pixelsYToContactPoint = collidingYPixels;
-
-            timeOfContact = 0;
-
-            if (this._element.speedY != 0) {
-                timeOfContact = Math.abs(collidingYPixels / this._element.speedY);
-            }
-
-            let pixelsXToContactPoint = this._element.speedX * timeOfContact;
-
-            contactY = this._element.y + pixelsYToContactPoint;
-            contactX = this._element.x + pixelsXToContactPoint;
-        } else {
-            let pixelsXToContactPoint = collidingXPixels;
-
-            timeOfContact = 0;
-
-            if (this._element.speedX != 0) {
-                timeOfContact = Math.abs(collidingXPixels / this._element.speedX);
-            }
-            let pixelsYToContactPoint = this._element.speedY * timeOfContact;
-
-            contactY = this._element.y + pixelsYToContactPoint;
-            contactX = this._element.x + pixelsXToContactPoint;
-        }
-
-        return {
-            contactX,
-            contactY,
-            timeOfContact,
-            type: collisionType
-        }
-    }
-
-
 
     calculateCollision(element: CollisionHandlerElement) : CollisionV2{
         const [speedX, speedY] = isMovingWrapperCollisionHandlerElement(element) ? this.calculateRelativeSpeed(element) : [this._element.speedX, this._element.speedY];
