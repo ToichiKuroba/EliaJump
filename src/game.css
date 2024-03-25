@@ -20,16 +20,70 @@ body, html {
     flex-grow: 1;
     display: grid;
     grid-template-columns: 1fr min-content 1000px 1fr;
-    grid-template-rows: 100%;
+    grid-template-rows: 40px 1fr;
     grid-template-areas: 
+    ". title title ."
     ". left game .";
   }
 
-  
+  .title {
+    grid-area: title;
+    display: flex;
+    justify-content: space-between;
+  }
 
-  .controlls {
-    position: absolute;
-    right: 0;
+  .title .nameBox .profilePic {
+    width: 40px;
+    height: 40px;
+    border-radius: 40px;
+    box-sizing: border-box;
+    background-image: url("./the banana.jpg");
+    background-size: 40px 40px;
+  }
+
+  .title .nameBox .profilePic:hover {
+    filter: brightness(90%);
+  }
+
+  .title .nameBox {
+    column-gap: 10px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    font-size: 15px;
+    justify-content: space-between;
+  }
+
+  .title .nameBox .name {
+    color: #0f1419;
+    font-weight: bold;
+    
+  }
+
+  .title .nameBox .name:hover {
+    text-decoration: underline solid #0f1419 1px;
+  }
+
+  .title .nameBox .at {
+    color: #536471;
+  }
+
+  .title .controlls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    line-height: 40px;
+    font-size: 15px;
+  }
+
+  .title .controlls.closed .controllsImg {
+    display: none;
+  }
+
+  .title .controlls .controllsImg {
+    z-index: 2;
   }
 
   .resources {
