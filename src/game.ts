@@ -99,11 +99,8 @@ class Game {
             this.elementHandler.add(new PlatformField(0, -1000, this._gameField.width, this._gameField.viewHeight + 1000))
         }
 
-        const startTime = Date.now();
         this.elementHandler.subElementInitialize();
 
         this._savePointHandler = new SavePointHandler(player, streamPlatform?.savePoints ?? []);
-
-        console.log(`Initialize took: ${startTime - Date.now()}ms`);
     }
 }

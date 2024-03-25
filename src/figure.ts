@@ -10,14 +10,6 @@ import { FocusElement } from "./util/focusElement";
 import { Timer } from "./util/timer";
 
 export class Figure extends RenderElementImpl implements FocusElement, MovingCollisionElement {
-
-handleResize(heightChange: number): void {
-    console.log("Org Pos: " + this.y);
-    console.log("Change:" + heightChange)
-    super.handleResize(heightChange);
-    console.log("Result:" + this.y);
-}   
-
     private _animation: FigureAnimation;
     get renderPrio(): RenderPrio {
         return RenderPrio.hight;
@@ -128,7 +120,6 @@ handleResize(heightChange: number): void {
 
 
     keyDown(ev: KeyboardEvent) {
-        console.log("key down");
         if (!this._isJumping && !this._isDoubleJumping) {
             if (ev.key == 'w' && !this._spaceTimer.isRunning) {
                 this._direction = 0;
@@ -194,7 +185,6 @@ handleResize(heightChange: number): void {
     }
 
     keyUp(ev: KeyboardEvent) {
-        console.log("key up");
         if (!this._isJumping) {
             if ((ev.key == 'a' || ev.key == 'w' || ev.key == 'd') && this._spaceTimer.isRunning) {
                 document.querySelector<HTMLAudioElement>("#jump")?.play();
