@@ -33,6 +33,7 @@ export class Platform extends RenderElementImpl {
         context.fillStyle = "#fff";
         context.fill();
         context.closePath();
+        context.fillText(this.x + "/" + this.y, this.x, this.y);
     }
 
     state: GameElementState = GameElementState.Inactive;
