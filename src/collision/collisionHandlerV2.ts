@@ -16,8 +16,21 @@ export class CollisionHandler {
 
     constructor(gameField: GameField) {
         this._gameField = gameField;
+        this._gameField.addResizeCallback(() => this.handleResize());
     }
 
+    private handleResize() {
+        if(this.collisionElementZones){
+            const zones = this.collisionElementZones;
+            this.collisionElementZones = new Map<number, CollisionHandlerElement[]>();
+            zones.forEach(collisionHandlerElements => {
+                for (let index = 0; index < collisionHandlerElements.length; index++) {
+                    const element = collisionHandlerElements[index];
+                    this.addToMap(element, this.collisionElementZones);
+                }
+            });
+        }
+    }
 
     add(element: CollisionElement) {
         if (isMovingCollisionElement(element)) {

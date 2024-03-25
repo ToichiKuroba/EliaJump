@@ -10,6 +10,14 @@ import { FocusElement } from "./util/focusElement";
 import { Timer } from "./util/timer";
 
 export class Figure extends RenderElementImpl implements FocusElement, MovingCollisionElement {
+
+handleResize(heightChange: number): void {
+    console.log("Org Pos: " + this.y);
+    console.log("Change:" + heightChange)
+    super.handleResize(heightChange);
+    console.log("Result:" + this.y);
+}   
+
     private _animation: FigureAnimation;
     get renderPrio(): RenderPrio {
         return RenderPrio.hight;
