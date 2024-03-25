@@ -14,7 +14,7 @@ export class Day extends DomElement<"span">{
         if(this._date.getDate() == 1) {
             const monthElement = document.createElement("span");
             monthElement.classList.add("month");
-            monthElement.innerText = date.toLocaleString('default', { month: 'long' });
+            monthElement.innerText = date.toLocaleString('default', { month: 'short' });
             this.element.appendChild(monthElement);
         }
     }
