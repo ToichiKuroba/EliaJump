@@ -42,7 +42,6 @@ export class Figure extends RenderElementImpl implements FocusElement, MovingCol
     private _jumpStrengthY = 0;
     private _jumpStartTime = 0;
     private _spaceTimer = new Timer();
-    private _dev: boolean;
     static MaxFallSpeed: number = 10;
     private _ignoreGravity: boolean = false;
     private get _footSpeed() {
@@ -52,14 +51,11 @@ export class Figure extends RenderElementImpl implements FocusElement, MovingCol
     private _isDoubleJumping = false;
     private _direction = 0;
     private _ignoreCollision = false;
-    constructor(x: number, y: number, figureAnimation: FigureAnimation, dev: boolean = false) {
+    constructor(x: number, y: number, figureAnimation: FigureAnimation) {
         super();
         this._animation = figureAnimation;
         this._x = x;
         this._y = y;
-        this._dev = dev;
-        document.addEventListener("keydown", (ev) => this.keyDown(ev));
-        document.addEventListener("keyup", ev => this.keyUp(ev));
     }
     get speedX(): number {
         return this._speedX;
@@ -118,98 +114,81 @@ export class Figure extends RenderElementImpl implements FocusElement, MovingCol
         return (2 * this._jumpHeight) / this._jumpLength;
     }
 
-
-    keyDown(ev: KeyboardEvent) {
-        if (!this._isJumping && !this._isDoubleJumping) {
-            if (ev.key == 'w' && !this._spaceTimer.isRunning) {
-                this._direction = 0;
+    startJumpLoad(direction: "left" | "up" | "right") {
+        if (!this._spaceTimer.isRunning) {
+            if (!this._isJumping) {
+                this.setDirection(direction);
                 this._spaceTimer.Start();
-            }
-
-            if (ev.key == 'a' && !this._spaceTimer.isRunning) {
-                this._direction = -1;
-                this._spaceTimer.Start();
-            }
-
-            if (ev.key == 'd' && !this._spaceTimer.isRunning) {
-                this._direction = 1;
-                this._spaceTimer.Start();
-            }
-        } else if (!this._isDoubleJumping) {
-            if (ev.key == 'w' && !this._spaceTimer.isRunning) {
+            } else if (!this._isDoubleJumping) {
                 this.endJump();
+                this.setDirection(direction);
                 this._isDoubleJumping = true;
-                this._direction = 0;
-                this._spaceTimer.Start();
-            }
-
-            if (ev.key == 'a' && !this._spaceTimer.isRunning) {
-                this.endJump();
-                this._isDoubleJumping = true;
-                this._direction = -1;
-                this._spaceTimer.Start();
-            }
-
-            if (ev.key == 'd' && !this._spaceTimer.isRunning) {
-                this.endJump();
-                this._isDoubleJumping = true;
-                this._direction = 1;
                 this._spaceTimer.Start();
             }
         }
+    }
 
-        if (this._dev) {
-            const devSpeed = ev.shiftKey ? 100 : ev.ctrlKey ? 1 : 10;
-            if (ev.key == 'ArrowLeft' || ev.key == 'ArrowRight' || ev.key == "ArrowUp" || ev.key == "ArrowDown") {
-                this._ignoreCollision = true;
-                this._ignoreGravity = true;
-                this.endJump();
-            }
+    setDirection(direction: "left" | "up" | "right") {
+        switch(direction) {
+            case "left":
+                this._direction = -1;
+                break;
 
-            if (ev.key == 'ArrowLeft') {
+            case "right":
+                this._direction = 1;
+                break;
+            
+            default: 
+                this._direction = 0;
+                break;
+        }
+    }
+
+
+    move(direction: "ArrowLeft" | "ArrowRight" | "ArrowUp" | "ArrowDown", sprint: boolean, sneak: boolean) {
+        this._ignoreCollision = true;
+        this._ignoreGravity = true;
+        this.endJump();
+        const devSpeed = sprint ? 100 : sneak ? 1 : 10;
+        switch (direction) {
+            case "ArrowLeft":
                 this._x -= devSpeed;
-            }
-
-            if (ev.key == 'ArrowRight') {
+                break;
+            case "ArrowRight":
                 this._x += devSpeed;
-            }
-
-            if (ev.key == "ArrowUp") {
+                break;
+            case "ArrowUp":
                 this._y -= devSpeed;
-            }
-
-            if (ev.key == "ArrowDown") {
+                break;
+            case "ArrowDown":
                 this._y += devSpeed;
-            }
+                break;
+            default:
+                break;
         }
     }
 
-    keyUp(ev: KeyboardEvent) {
-        if (!this._isJumping) {
-            if ((ev.key == 'a' || ev.key == 'w' || ev.key == 'd') && this._spaceTimer.isRunning) {
-                document.querySelector<HTMLAudioElement>("#jump")?.play();
-                this._animation.start();
-                this._spaceTimer.Stop();
-                this._jumpStartTime = Date.now();
-                this._isJumping = true;
-                this._jumpStrengthY = this.ApproximateJumpStrength(100 * (this._spaceTimer.millseconds / Figure.FullJumpLoadTime));
-                this._jumpStrengthX = this.ApproximateJumpStrength(100 * (this._spaceTimer.millseconds / Figure.FullJumpLoadTime));
-                this._spaceTimer.Reset();
-                console.log(`${this._jumpStrengthX} - ${this._jumpStrengthY}`);
-            }
-        }
+    endMove() {
+        this._ignoreCollision = false;
+    }
 
-        if (this._dev) {
-            if (ev.key == 'ArrowLeft' || ev.key == "ArrowDown" || ev.key == 'ArrowRight' || ev.key == "ArrowUp") {
-                this._ignoreCollision = false;
-            }
+    toggleGravity() {
+        this._ignoreGravity = !this._ignoreGravity;
+    }
 
-            if (ev.key == 'g') {
-                this._ignoreGravity = false;
-            }
-
+    endJumpLoad() {
+        if (this._spaceTimer.isRunning && !this._isJumping) {
+            document.querySelector<HTMLAudioElement>("#jump")?.play();
+            this._animation.start();
+            this._spaceTimer.Stop();
+            this._jumpStartTime = Date.now();
+            this._isJumping = true;
+            this._jumpStrengthY = this.ApproximateJumpStrength(100 * (this._spaceTimer.millseconds / Figure.FullJumpLoadTime));
+            this._jumpStrengthX = this.ApproximateJumpStrength(100 * (this._spaceTimer.millseconds / Figure.FullJumpLoadTime));
+            this._spaceTimer.Reset();
         }
     }
+
 
     private ApproximateJumpStrength(baseJumpStrength: number) {
         if (baseJumpStrength < Figure.SmallJumpStrength) {
@@ -229,12 +208,12 @@ export class Figure extends RenderElementImpl implements FocusElement, MovingCol
         const isLoadingJump = jumpStrength > Figure.SmallJumpStrength && !this._isJumping;
         const isLoadingFullJump = isLoadingJump && jumpStrength > Figure.MediumJumpStrength;
         this._animation.renderNextFrame(context, {
-            isLoadingJump, 
-            isLoadingFullJump, 
+            isLoadingJump,
+            isLoadingFullJump,
             jumpDirection: this._direction,
-            x: Math.round(this.x), 
-            y: Math.round(this.y), 
-            width: this.width, 
+            x: Math.round(this.x),
+            y: Math.round(this.y),
+            width: this.width,
             height: this.height
         });
     }

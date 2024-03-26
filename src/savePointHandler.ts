@@ -24,12 +24,6 @@ export class SavePointHandler {
             this._savePoints.set(savePoint.id, savePoint);
         }
 
-        document.addEventListener("keypress", (ev) => {
-            if (ev.key == "r") {
-                this.returnToSavePoint();
-            }
-        });
-
         this.returnToSavePoint();
     }
 
