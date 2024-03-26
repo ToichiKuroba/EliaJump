@@ -13,6 +13,7 @@
     "vite": "^5.1.4"
   },
   "dependencies": {
+    "external-svg-loader": "^1.7.1",
     "iso8601-duration": "^2.1.2",
     "pure-rand": "^6.0.4"
   }

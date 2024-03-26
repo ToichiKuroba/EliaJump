@@ -54,7 +54,7 @@ export class GameElementHandler extends MetaElement {
 
         var renderElementsInPrio = this._priotizedElements.get(prioToRender) ?? [];
         for (let index = 0; index < renderElementsInPrio.length; index++) {
-            const element = this._elements[index];
+            const element = renderElementsInPrio[index];
             if (element.state == GameElementState.Active || element.state == GameElementState.Inactive) {
                 if (isRenderElement(element)) {
                     gameField.render(element);

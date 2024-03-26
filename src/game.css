@@ -78,6 +78,27 @@ body, html {
     font-size: 15px;
   }
 
+  .title .controlls .controllsIcon {
+    min-height: 40px;
+    fill: #536471;
+    display: flex;
+    align-items: center;
+  }
+
+  .title .controlls .controllsIcon svg {
+    height: 20px;
+    width: 20px;
+    border-radius: 100%;
+    padding: 5px;
+  }
+
+  .title .controlls .controllsIcon svg:hover,
+  .title .controlls.open .controllsIcon svg {
+    cursor: pointer;
+    fill: #1d9bf0;
+    background-color: #1d9bf01a;
+  }
+
   .title .controlls.closed .controllsImg {
     display: none;
   }

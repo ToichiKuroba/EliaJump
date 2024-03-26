@@ -4,7 +4,7 @@ import { GameElementState } from "./elements/gameElementState";
 export class Day extends DomElement<"span">{
     private _date: Date;
     constructor(container: HTMLElement, date: Date, height: number){
-        super(container, "span");
+        super("span", container);
         this._date = date;
         this.element.style.setProperty("--dayHeight", height + "px");
         const dateElement = document.createElement("span");

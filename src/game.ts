@@ -9,7 +9,9 @@ import { isCollisionElement } from "./collision/collisionElement";
 import { StreamPlatformField } from "./platforms/streamPlatformField"; 
 import { SavePointHandler } from "./savePointHandler";
 import { StarlingAnimation } from "./animation/starlingAnimation";
+import { Controller } from "./controller";
 import { Controlls } from "./controlls";
+import "external-svg-loader";
 
 function Init() {
     if (document.readyState == "complete") {
@@ -31,12 +33,12 @@ class Game {
     private readonly elementHandler: GameElementHandler;
     private readonly _gameField: GameField;
     private _savePointHandler: SavePointHandler | undefined;
-    private _controlls: Controlls
+    private _controller: Controller
     constructor() {
         this.elementHandler = new GameElementHandler(); 
         this._gameField = new GameField(document.querySelector<HTMLElement>(".game")!, this.elementHandler, this._dev);
         this.collisionHandler = new CollisionHandler(this._gameField);
-        this._controlls = new Controlls(this._dev);
+        this._controller = new Controller(this._dev);
     }
 
     handleElementAdded = (ev: AddedElementEvent) => {
@@ -93,7 +95,14 @@ class Game {
         const player = new Figure(0, this._gameField.bottom - 50, new StarlingAnimation());
         this._gameField.follow(player);
         this.elementHandler.add(player);
-        this._controlls.player = player;
+        this._controller.player = player;
+        const controllsElement = document.querySelector<HTMLDivElement>(".controlls");
+        if(controllsElement){
+            const controlls = new Controlls(controllsElement);
+            this.elementHandler.add(controlls);
+            this._controller.controlls = controlls;
+        }
+
         const dayContainer = document.querySelector<HTMLElement>(".dayContainer");
         if(dayContainer) {
             this._gameField.addToTranslate(dayContainer);
@@ -106,5 +115,6 @@ class Game {
         this.elementHandler.subElementInitialize();
 
         this._savePointHandler = new SavePointHandler(player, streamPlatform?.savePoints ?? []);
+        this._controller.savePointHandler = this._savePointHandler;
     }
 }
