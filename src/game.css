@@ -1,4 +1,19 @@
 
+:root {  
+  --light-gold-rgb: 249 181 51;
+  --dark-gold-rgb: 215 147 23;
+}
+
+@keyframes pan {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 0%;
+  }
+}
+
+
 body, html {
     padding: 0;
     margin: 0;
@@ -8,18 +23,58 @@ body, html {
     font-family: Arial;
     font-size: 30px;
   }
+  
+.dayContainer,
+.game,
+.controllbar,
+.title {
+  z-index: 2;
+}
+
   canvas {
-    background: #eee;
+    background-color: #e2d7dda1;
     display: block;
     margin: 0 auto;
-    border: 1px solid #81678e;
+    border-left: 1px solid #81678e;
+    z-index: 2;
   }
 
-
+  #star-container {
+    overflow: hidden;
+  }
+  
+  #star-pattern {
+    background-image: url("https://assets.codepen.io/1468070/Star+Pattern+3.svg");
+    background-color: #536471;
+    background-size: 10%;  
+    position: absolute;
+    left: 50%;
+    top: 0px;
+    translate: -50% 0%;
+    z-index: 1;
+    height: 100%;
+    width: 100%;
+    min-width: 1200px;
+    opacity: 0.10;
+    animation: pan 180s linear infinite;
+    will-change: background-position;
+  }
+  
+  #star-gradient-overlay {
+    /* background: radial-gradient(circle, transparent 75%, rgb(var(--dark-gold-rgb))); */
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    opacity: 0.9;
+    z-index: 2;
+  }
+  
   .main {
     flex-grow: 1;
     display: grid;
-    grid-template-columns: 1fr min-content 1000px 1fr;
+    grid-template-columns: 1fr min-content 1100px 1fr;
     grid-template-rows: 40px 1fr 50px;
     grid-template-areas: 
     ". title title ."
@@ -29,49 +84,14 @@ body, html {
 
   .controllbar {
     grid-area: controllbar;
+    border-top: 1px solid #81678e;
   }
 
   .title {
     grid-area: title;
     display: flex;
     justify-content: space-between;
-  }
-
-  .title .nameBox .profilePic {
-    width: 40px;
-    height: 40px;
-    border-radius: 40px;
-    box-sizing: border-box;
-    background-image: url("./the banana.jpg");
-    background-size: 40px 40px;
-  }
-
-  .title .nameBox .profilePic:hover {
-    filter: brightness(90%);
-  }
-
-  .title .nameBox {
-    column-gap: 10px;
-    text-decoration: none;
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    font-size: 15px;
-    justify-content: space-between;
-  }
-
-  .title .nameBox .name {
-    color: #0f1419;
-    font-weight: bold;
-    
-  }
-
-  .title .nameBox .name:hover {
-    text-decoration: underline solid #0f1419 1px;
-  }
-
-  .title .nameBox .at {
-    color: #536471;
+    background-color: #ffffffa1;
   }
 
   .resources {
@@ -89,7 +109,7 @@ body, html {
     --gradientStart: #fff;
     --gradientEnd: #fff;
     --dayHeight: 0px;
-    background: linear-gradient(var(--gradientStart), var(--gradientEnd));
+    background-color: #e2d7dda1;
     display: flex;
     flex-direction: column-reverse;
   }

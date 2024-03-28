@@ -127,15 +127,8 @@ export class GameField {
         this.translateScreen();
 
         if(this._context) {
-            const gradient = this._context.createLinearGradient(0, this._elementHandler.topY, 0, this.viewHeight); 
-            // Add three color stops
-            gradient.addColorStop(0, GameField.gradientStartColor);
-            gradient.addColorStop(1, GameField.gradientEndColor);
-            // Set the fill style and draw a rectangle
-            this._context.fillStyle = gradient;
-            this._context.fillRect(0, -Math.round(this.yTranslation), this.width, this.viewHeight);
+            this._context.clearRect(0, -Math.round(this.yTranslation), this.width, this.viewHeight);
         }
-        
         this._elementHandler.render(this);
     }
 
