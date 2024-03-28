@@ -5,7 +5,7 @@ import { End } from "../end";
 import { Figure } from "../figure";
 import { Platform } from "./platform";
 import { SavePoint } from "../savePoint";
-import { SavePointProvider } from "../savePointProvider";
+import { SavePointProvider, SavePointsProvidedListener } from "../savePointProvider";
 import { StreamPlatform } from "./streamPlatform";
 import { platformsConfig } from "../util/platformsConfig";
 import { Stream } from "../util/stream";
@@ -80,7 +80,24 @@ export class StreamPlatformField extends GameElementHandler implements SavePoint
         this._dayElementContainer = dayElementContainer;
         this._streamsForDays = this.getStreamsForDays();
     }
-    savePoints:SavePoint[] = [];
+
+    savePointsProvidedListeners:SavePointsProvidedListener[] = [];
+    set onSavePointsProvided(listener: SavePointsProvidedListener) {
+        if(this._savePoints.length) {
+            listener(this._savePoints);
+        }
+
+        this.savePointsProvidedListeners.push(listener);
+    }
+
+    private savePointsProvided() {
+        for (let index = 0; index < this.savePointsProvidedListeners.length; index++) {
+            const listener = this.savePointsProvidedListeners[index];
+            listener(this._savePoints);
+        }
+    }
+
+    private _savePoints:SavePoint[] = [];
 
     private get widthUnitWidth() {
         return this._width / StreamPlatformField.WidthUnitDevider;
@@ -110,7 +127,7 @@ export class StreamPlatformField extends GameElementHandler implements SavePoint
                     if(day.date.getMonth() != lastSavePointMonth) {
                         let savePointPlatform = new SavePointPlatform(platform);
                         this.add(savePointPlatform);
-                        this.savePoints.push(new SavePoint(stream.videoLink, savePointPlatform));
+                        this._savePoints.push(new SavePoint(stream.videoLink, savePointPlatform));
                         lastSavePointMonth = day.date.getMonth();
                     }else {
                         this.add(platform);
@@ -135,6 +152,7 @@ export class StreamPlatformField extends GameElementHandler implements SavePoint
         end.style.setProperty("--dayHeight", "2000px");
         this._dayElementContainer.appendChild(end);
         this.add(new End(0, currentY - 300));
+        this.savePointsProvided();
     }
 
     getDaysUntilNextStream(days: {date: Date, hasStreams: boolean}[], startIndex: number) {

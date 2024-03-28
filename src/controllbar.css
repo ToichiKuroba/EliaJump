@@ -1,0 +1,30 @@
+.controllbar {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: space-between;
+}
+
+.controllbar .icon {
+    display: flex;
+    padding: 5px;
+    border-radius: 100%;
+    fill: #536471;
+}
+
+.controllbar .icon svg {
+    width: 40px;
+    height: 40px;
+}
+
+.controllbar .icon:hover {
+  cursor: pointer;
+  fill: #1d9bf0;
+  background-color: #1d9bf01a;
+}
+
+.controllbar .controlls {
+    width: 50px;
+    align-items: flex-start;
+}

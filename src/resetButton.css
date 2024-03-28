@@ -1,0 +1,48 @@
+.restart {
+
+}
+
+.restart.open .restartWarning {
+    display: grid;
+}
+
+.restart .restartWarning {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    background-color: #fff;
+    width: 500px;
+    height: 110px;
+    padding: 5px;
+    text-align: center;
+    grid-template-areas: 
+        "text text"
+        "yes no";
+    gap: 5px;
+    border-radius: 5px;
+}
+
+.restart .restartWarning .text {
+    grid-area: text;
+}
+
+.restart .restartWarning .yesBtn {
+    grid-area: yes;
+}
+.restart .restartWarning .noBtn {
+    grid-area: no;
+}
+
+.restart .restartWarning .btn {
+    cursor: pointer;
+    border: 1px solid;
+    border-radius: 5px;
+}
+
+.restart .restartWarning .btn:hover {
+    background-color: #1d9bf01a;
+}

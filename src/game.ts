@@ -9,9 +9,10 @@ import { isCollisionElement } from "./collision/collisionElement";
 import { StreamPlatformField } from "./platforms/streamPlatformField"; 
 import { SavePointHandler } from "./savePointHandler";
 import { StarlingAnimation } from "./animation/starlingAnimation";
-import { Controller } from "./controller";
 import { Controlls } from "./controlls";
 import "external-svg-loader";
+import { ControllerHandler } from "./controller/controllerHandler";
+import { Controllbar } from "./controllbar";
 
 function Init() {
     if (document.readyState == "complete") {
@@ -33,12 +34,11 @@ class Game {
     private readonly elementHandler: GameElementHandler;
     private readonly _gameField: GameField;
     private _savePointHandler: SavePointHandler | undefined;
-    private _controller: Controller
     constructor() {
         this.elementHandler = new GameElementHandler(); 
         this._gameField = new GameField(document.querySelector<HTMLElement>(".game")!, this.elementHandler, this._dev);
         this.collisionHandler = new CollisionHandler(this._gameField);
-        this._controller = new Controller(this._dev);
+        ControllerHandler.Instance.dev = this._dev;
     }
 
     handleElementAdded = (ev: AddedElementEvent) => {
@@ -87,6 +87,7 @@ class Game {
         this.elementHandler.dispose();
         this.collisionHandler.dispose();
         this._savePointHandler?.dispose();
+        ControllerHandler.Instance.dispose();
         this._isRunning = false;
     }
 
@@ -95,12 +96,12 @@ class Game {
         const player = new Figure(0, this._gameField.bottom - 50, new StarlingAnimation());
         this._gameField.follow(player);
         this.elementHandler.add(player);
-        this._controller.player = player;
-        const controllsElement = document.querySelector<HTMLDivElement>(".controlls");
+        ControllerHandler.Instance.controll(player);
+        const controllsElement = document.querySelector<HTMLDivElement>(".title .controlls");
         if(controllsElement){
-            const controlls = new Controlls(controllsElement);
+            const controlls = new Controlls(controllsElement, player);
             this.elementHandler.add(controlls);
-            this._controller.controlls = controlls;
+            ControllerHandler.Instance.controll(controlls);
         }
 
         const dayContainer = document.querySelector<HTMLElement>(".dayContainer");
@@ -108,13 +109,20 @@ class Game {
             this._gameField.addToTranslate(dayContainer);
             streamPlatform = new StreamPlatformField(0, this._gameField.viewHeight, this._gameField.width, dayContainer);
             this.elementHandler.add(streamPlatform);
+            this._savePointHandler = new SavePointHandler(player, streamPlatform);
+            ControllerHandler.Instance.controll(this._savePointHandler);
         }else {
             this.elementHandler.add(new PlatformField(0, -1000, this._gameField.width, this._gameField.viewHeight + 1000))
         }
 
+        const controllbarElement = document.querySelector<HTMLDivElement>(".controllbar");
+        if(controllbarElement && this._savePointHandler) {
+            const controllbar = new Controllbar(controllbarElement, player, this._savePointHandler);
+            this.elementHandler.add(controllbar);
+        }
+
         this.elementHandler.subElementInitialize();
 
-        this._savePointHandler = new SavePointHandler(player, streamPlatform?.savePoints ?? []);
-        this._controller.savePointHandler = this._savePointHandler;
+        this._savePointHandler?.returnToSavePoint();
     }
 }

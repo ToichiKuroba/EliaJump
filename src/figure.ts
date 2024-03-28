@@ -11,6 +11,7 @@ import { Timer } from "./util/timer";
 
 export class Figure extends RenderElementImpl implements FocusElement, MovingCollisionElement {
     private _animation: FigureAnimation;
+    private _initialX: number;
     get renderPrio(): RenderPrio {
         return RenderPrio.hight;
     }
@@ -24,7 +25,7 @@ export class Figure extends RenderElementImpl implements FocusElement, MovingCol
     get canCollide(): boolean {
         return true;
     }
-
+    private _initialY: number;
     protected _speedX: number = 0;
     protected _speedY: number = 0;
     protected _y: number;
@@ -56,6 +57,8 @@ export class Figure extends RenderElementImpl implements FocusElement, MovingCol
         this._animation = figureAnimation;
         this._x = x;
         this._y = y;
+        this._initialY = y;
+        this._initialX = x;
     }
     get speedX(): number {
         return this._speedX;
@@ -303,6 +306,11 @@ export class Figure extends RenderElementImpl implements FocusElement, MovingCol
         this.endJump();
         this._x = savePoint.x;
         this._y = savePoint.y - this._height;
+    }
+
+    goToStartPosition() {
+        this._x = this._initialX;
+        this._y = this._initialY;
     }
 
     fixCollision(collision: CollisionV2): void {

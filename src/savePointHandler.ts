@@ -1,5 +1,6 @@
 import { Figure } from "./figure";
 import { SavePoint } from "./savePoint";
+import { SavePointProvider } from "./savePointProvider";
 
 export class SavePointHandler {
     private static STORAGE_KEY = "SavePoints";
@@ -7,11 +8,19 @@ export class SavePointHandler {
     private _savePoints: Map<string, SavePoint>;
     private _reachedSavePoints: string[];
     private _notReachedSavePoints: string[];
-    constructor(player: Figure, savePoints: SavePoint[]) {
+    private _savePointProvider: SavePointProvider;
+    constructor(player: Figure, savePointProvider: SavePointProvider) {
         this._player = player;
         this._savePoints = new Map<string, SavePoint>();
         const storage = localStorage.getItem(SavePointHandler.STORAGE_KEY);
         this._reachedSavePoints = storage ? JSON.parse(storage) as string[] : [];
+        this._notReachedSavePoints = [];
+        this._savePointProvider = savePointProvider;
+        this._savePointProvider.onSavePointsProvided = savePoints => this.savePoints = savePoints;
+    }
+
+    set savePoints(savePoints: SavePoint[]) {
+        this._savePoints.clear();
         this._notReachedSavePoints = [];
         for (let index = 0; index < savePoints.length; index++) {
             const savePoint = savePoints[index];
@@ -23,8 +32,6 @@ export class SavePointHandler {
 
             this._savePoints.set(savePoint.id, savePoint);
         }
-
-        this.returnToSavePoint();
     }
 
     checkSavePoint() {
@@ -62,8 +69,19 @@ export class SavePointHandler {
         localStorage.setItem(SavePointHandler.STORAGE_KEY, JSON.stringify(this._reachedSavePoints));
     }
 
-    dispose() {
+    deleteSavePoints() {
+        localStorage.removeItem(SavePointHandler.STORAGE_KEY);
+        this.resetSavePoints();
+    }
+
+    private resetSavePoints() {
         this._savePoints.forEach(savePoint => savePoint.reached = false);
+        this._notReachedSavePoints = [...this._reachedSavePoints, ...this._notReachedSavePoints];
+        this._reachedSavePoints = [];
+    }
+
+    dispose() {
+        this.resetSavePoints();
         this._savePoints = new Map<string, SavePoint>();
         this._notReachedSavePoints = [];
         this._reachedSavePoints = [];

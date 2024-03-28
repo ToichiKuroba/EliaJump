@@ -1,64 +1,74 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Elia Jump</title>
-  </head>
-  <body> 
-    <div class="resources" style="display: none;">
-      <audio id="jump" src="./jump.mp3"></audio>
-      <img class="defaultImage" src="/starling/Starling.png" />
-      <img class="wingsUpImage" src="/starling/Starling Up.png" />
-      <img class="wingsDownImage" src="/starling/Starling Down.png" />
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elia Jump</title>
+</head>
+
+<body>
+  <div class="resources" style="display: none;">
+    <audio id="jump" src="./jump.mp3"></audio>
+    <img class="defaultImage" src="/starling/Starling.png" />
+    <img class="wingsUpImage" src="/starling/Starling Up.png" />
+    <img class="wingsDownImage" src="/starling/Starling Down.png" />
+    <div class="jump">
+      <img class="defaultImage" src="/starling/Starling Jump.png" />
+      <img class="wingsUpImage" src="/starling/Starling Jump Up.png" />
+      <img class="wingsDownImage" src="/starling/Starling Jump Down.png" />
+    </div>
+    <div class="bigJump">
+      <img class="defaultImage" src="/starling/Starling Big Jump.png" />
+      <img class="wingsUpImage" src="/starling/Starling Big Jump Up.png" />
+      <img class="wingsDownImage" src="/starling/Starling Big Jump Down.png" />
+    </div>
+    <div class="side">
+      <img class="defaultImage" src="/starling/Starling Side.png" />
+      <img class="wingsUpImage" src="/starling/Starling Side Up.png" />
+      <img class="wingsDownImage" src="/starling/Starling Side Down.png" />
       <div class="jump">
-        <img class="defaultImage" src="/starling/Starling Jump.png" />
-        <img class="wingsUpImage" src="/starling/Starling Jump Up.png" />
-        <img class="wingsDownImage" src="/starling/Starling Jump Down.png" />
+        <img class="defaultImage" src="/starling/Starling Side Jump.png" />
+        <img class="wingsUpImage" src="/starling/Starling Side Jump Up.png" />
+        <img class="wingsDownImage" src="/starling/Starling Side Jump Down.png" />
       </div>
       <div class="bigJump">
-        <img class="defaultImage" src="/starling/Starling Big Jump.png" />
-        <img class="wingsUpImage" src="/starling/Starling Big Jump Up.png" />
-        <img class="wingsDownImage" src="/starling/Starling Big Jump Down.png" />
-      </div>
-      <div class="side">
-        <img class="defaultImage" src="/starling/Starling Side.png" />
-        <img class="wingsUpImage" src="/starling/Starling Side Up.png" />
-        <img class="wingsDownImage" src="/starling/Starling Side Down.png" />
-        <div class="jump">
-          <img class="defaultImage" src="/starling/Starling Side Jump.png" />
-          <img class="wingsUpImage" src="/starling/Starling Side Jump Up.png" />
-          <img class="wingsDownImage" src="/starling/Starling Side Jump Down.png" />
-        </div>
-        <div class="bigJump">
-          <img class="defaultImage" src="/starling/Starling Side Big Jump.png" />
-          <img class="wingsUpImage" src="/starling/Starling Side Big Jump Up.png" />
-          <img class="wingsDownImage" src="/starling/Starling Side Big Jump Down.png" />
-        </div>
+        <img class="defaultImage" src="/starling/Starling Side Big Jump.png" />
+        <img class="wingsUpImage" src="/starling/Starling Side Big Jump Up.png" />
+        <img class="wingsDownImage" src="/starling/Starling Side Big Jump Down.png" />
       </div>
     </div>
-    <div class="main">
-      <div class="title">
+  </div>
+  <div class="main">
+    <div class="title">
       <a class="nameBox" href="https://twitter.com/EliaStellaria" target="_blank">
         <div class="profilePic"></div>
         <span class="name">Elia Stellaria【V-Dere】</span>
         <span class="at">@EliaStellaria</span>
       </a>
+    </div>
+    <div class="leftFrame">
+      <div class="dayContainer">
+      </div>
+    </div>
+    <div class="game">
+      <canvas></canvas>
+    </div>
+    <div class="controllbar">
       <div class="controlls open">
-      <span class="controllsIcon"><svg data-src="/controller.svg" ></svg></span>
-        <!-- <object class="controllsIcon" data="controller.svg" title="Controlls"></object> -->
         <img class="controllsImg" src="/Controlls.png" />
+        <span class="controllsIcon icon"><svg data-src="/controller.svg"></svg></span>
+      </div>
+      <div class="restart">
+        <span class="icon"><svg data-src="/restart.svg"></svg></span>
+        <div class="restartWarning"><span class="text">Are you sure you want to restart? You will lose all progress!</span><div class="yesBtn btn">Yes</div><div class="noBtn btn">No</div></div>
+      </div>
+      <div class="scores">
+        <span class="icon"><svg data-src="/scores.svg"></svg></span>
       </div>
     </div>
-      <div class="leftFrame">
-        <div class="dayContainer">
+  </div>
+  <script type="module" src="/src/game.ts"></script>
+</body>
 
-        </div>
-      </div>
-      <div class="game">
-        <canvas></canvas>
-      </div>
-    </div>
-    <script type="module" src="/src/game.ts"></script>
-  </body>
 </html>
