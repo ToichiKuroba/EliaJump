@@ -44,7 +44,6 @@ export abstract class BaseAnimation<AnimationDataType extends AnimationData> imp
         
         context.drawImage(this.frames[this.currentFrame], data.x, data.y, data.width, data.height);  
         if(this.frames.length > 1 && this._lastFrameChange && Date.now() - this._lastFrameChange > this.changeInterval) {
-            console.log(this._currentFrameCounter);
             this._lastFrameChange = Date.now();
             this._currentFrameCounter += this._direction;
 
