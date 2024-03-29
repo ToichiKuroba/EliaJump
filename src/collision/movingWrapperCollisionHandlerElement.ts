@@ -199,7 +199,6 @@ export class MovingWrapperCollisionHandlerElement extends WrapperCollisionHandle
                 //Here goes juice special logic for the perfect corner.
                 collisionType = CollisionType.Verticle;
                 if (speedY > 0) {
-                    collisionType = CollisionType.Horizontal;
                 }
             }
         }else {
