@@ -2,8 +2,9 @@ import { DomElement } from "./elements/domElement";
 import { GameElementState } from "./elements/gameElementState";
 import { Figure } from "./figure";
 import "./controlls.css";
+import { ControllbarElement } from "./controllbar";
 
-export class Controlls extends DomElement<"div"> {
+export class Controlls extends DomElement<"div"> implements ControllbarElement {
     private _player: Figure;
     constructor(element: HTMLDivElement, player: Figure) {
         super(element);
@@ -13,14 +14,12 @@ export class Controlls extends DomElement<"div"> {
     toggleOpen(): void {
         this.open = !this.open;
     }
-    open: Boolean = true;
+    open: boolean = true;
 
     refresh(): void {
         if(this.open){
             this.element.parentElement?.classList.add("open");
-            this.element.parentElement?.classList.remove("closed");
         }else {
-            this.element.parentElement?.classList.add("closed");
             this.element.parentElement?.classList.remove("open");
         }
     }

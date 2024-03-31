@@ -1,27 +1,24 @@
-import { DomElement } from "./elements/domElement";
 import { GameElementState } from "./elements/gameElementState";
 import { Figure } from "./figure";
 import { SavePointHandler } from "./savePointHandler";
-import "./resetButton.css";
+import "./resetWarning.css";
+import { ModalDomElementImpl } from "./elements/modalDomElement";
+import { ControllbarElement } from "./controllbar";
 
-export class ResetWarning extends DomElement<"div"> {
+export class ResetWarning extends ModalDomElementImpl<"div"> implements ControllbarElement {
     private _saveHandler: SavePointHandler;
     private _player: Figure;
-    private noButton: HTMLDivElement | null;
-    private yesButton: HTMLDivElement | null;
     constructor(element: HTMLDivElement, saveHandler: SavePointHandler, player: Figure) {
         super(element);
         this._saveHandler = saveHandler;
         this._player = player;
-        this.yesButton = element.querySelector<HTMLDivElement>(".yesBtn");
-        this.noButton = element.querySelector<HTMLDivElement>(".noBtn");
     }
 
     get YesButton() {
-        return this.yesButton;
+        return this.modal?.querySelector<HTMLDivElement>(".yesBtn") ?? null;
     }
     get NoButton() {
-        return this.noButton;
+        return this.modal?.querySelector<HTMLDivElement>(".noBtn") ?? null;
     }
 
     refresh(): void {
@@ -33,7 +30,7 @@ export class ResetWarning extends DomElement<"div"> {
     }
 
     close() {
-        this.element.parentElement?.classList.remove("open");
+        this.element.classList.remove("open");
     }
 
     state: GameElementState = GameElementState.Inactive;

@@ -1,0 +1,4 @@
+.leaderBoard .leaderBoardView {
+    width: calc(var(--gameField-width) - 100px);
+    --modal-height: 50%;
+}

@@ -1,7 +1,6 @@
 import { Controlls } from "../controlls";
 import { GameElement } from "../elements/gameElement";
 import { Figure } from "../figure";
-import { ResetButton } from "../resetButton";
 import { ResetWarning } from "../resetWarning";
 import { SavePointHandler } from "../savePointHandler";
 import { ResetWarningController } from "./resetWarningController";
@@ -9,6 +8,10 @@ import { ClickController } from "./clickController";
 import { Controller } from "./controller";
 import { PlayerController } from "./playerController";
 import { SavePointController } from "./savePointController";
+import { LeaderBoard } from "../leaderBoard";
+import { LeaderBoardController } from "./leaderBoardController";
+import { isModalDomElement } from "../elements/modalDomElement";
+import { ModalElementController } from "./modalElementController";
 
 export class ControllerHandler {
     private static instance = new ControllerHandler();
@@ -32,10 +35,12 @@ export class ControllerHandler {
             controller = new SavePointController(controllElement);
         }else if(controllElement instanceof Controlls) {
             controller = new ClickController(controllElement, () => controllElement.toggleOpen());
-        }else if(controllElement instanceof ResetButton) {
-            controller = new ClickController(controllElement, () => controllElement.showResetWarning());
         }else if(controllElement instanceof ResetWarning) {
             controller = new ResetWarningController(controllElement);
+        }else if(controllElement instanceof LeaderBoard) {
+            controller = new LeaderBoardController(controllElement);
+        }else if(isModalDomElement(controllElement)) {
+            controller = new ModalElementController(controllElement);
         }
 
         if(controller) {

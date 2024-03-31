@@ -14,16 +14,14 @@
     right: 0;
     bottom: 0;
     margin: auto;
-    background-color: #fff;
     width: 500px;
-    height: 110px;
+    --modal-height: 110px;
     padding: 5px;
     text-align: center;
     grid-template-areas: 
         "text text"
         "yes no";
     gap: 5px;
-    border-radius: 5px;
 }
 
 .restart .restartWarning .text {

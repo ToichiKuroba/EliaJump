@@ -1,0 +1,7 @@
+.modalContainer .modal {
+    background-color: var(--primary-background-color);
+    border: 1px solid var(--border-color);
+    height: var(--modal-height);
+    border-bottom-left-radius: calc(var(--modal-height) * 0.1);
+    border-top-right-radius: calc(var(--modal-height) * 0.1);
+}

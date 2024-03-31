@@ -2,7 +2,6 @@ import { CollisionV2 } from "../collision/collision";
 import { CollisionType } from "../collision/collisionType";
 import { MovingCollisionElement } from "../collision/movingCollisionElement";
 import { GameElementState } from "../elements/gameElementState";
-import { RenderArea } from "../elements/renderArea";
 import { RenderMap } from "../render/renderMap";
 import { Platform } from "./platform";
 
