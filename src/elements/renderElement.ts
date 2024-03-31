@@ -1,8 +1,16 @@
 import { CollisionElement } from "../collision/collisionElement";
+import { RenderData } from "../render/renderData";
+import { RenderMap } from "../render/renderMap";
 import { DefaultGameElement, GameElement } from "./gameElement";
+import { GameElementState } from "./gameElementState";
+import { RenderArea } from "./renderArea";
 import { RenderPrio } from "./renderPrio";
 
 export abstract class RenderElementImpl extends DefaultGameElement implements RenderElement{
+    private _prevRenderData: RenderData | undefined;
+    get prevRenderData(): RenderData | undefined {
+        return this._prevRenderData;
+    }
     get renderPrio(): RenderPrio {
         return RenderPrio.normal;
     }
@@ -20,24 +28,44 @@ export abstract class RenderElementImpl extends DefaultGameElement implements Re
     protected abstract _x: number;
     abstract get height(): number;
     abstract get width(): number;
+    protected abstract get rendererKey(): keyof RenderMap;
     handleResize(heightChange: number) {
         this._y += heightChange;
     }
-    abstract render(context: CanvasRenderingContext2D) : void;
-    shouldRender(renderAreaXStart: number, renderAreaYStart: number, renderAreaXEnd: number, renderAreaYEnd: number) {
-        return this._x >= renderAreaXStart && this._x <= renderAreaXEnd && this._y >= renderAreaYStart && this._y <= renderAreaYEnd;
+
+    get renderData() : RenderData | undefined {
+        this._prevRenderData = extractRenderData(this, this.rendererKey);
+        return this._prevRenderData;
+    }
+    
+    shouldRender(renderArea: RenderArea) {    
+        return this.x >= renderArea.xStart - this.width && this.x <= renderArea.xEnd && this.y >= renderArea.yStart - this.height && this.y <= renderArea.yEnd;
     }
 }
 
 export function isRenderElement(element : GameElement | RenderElement) : element is RenderElement {
-    return typeof (element as RenderElement).render == "function"; 
+    return typeof (element as RenderElement).shouldRender === "function"; 
 }
 
 export interface RenderElement extends CollisionElement {
     get x(): number;
     get y(): number;
     handleResize(heightChange: number):void;
-    render(context: CanvasRenderingContext2D) : void;
-    shouldRender(renderAreaXStart: number, renderAreaYStart: number, renderAreaXEnd: number, renderAreaYEnd: number) : boolean;
-    get renderPrio(): RenderPrio
+    get renderPrio(): RenderPrio,
+    get renderData(): RenderData | undefined,
+    shouldRender(renderArea: RenderArea):boolean,
+    get prevRenderData(): RenderData | undefined,
+}
+
+export function extractRenderData(renderElement: RenderElement & GameElement, rendererKey: keyof RenderMap) : RenderData {
+    return {
+        rendererKey,
+        y : renderElement.y,
+        x : renderElement.x,
+        height: renderElement.height,
+        width: renderElement.width,
+        needsRerender: renderElement.state != GameElementState.Inactive,
+        transferables: [],
+        prevRenderData: {...renderElement.prevRenderData, prevRenderData: undefined}
+    } as RenderData;
 }

@@ -2,16 +2,20 @@ import { FigureAnimation } from "./animation/figureAnimation";
 import { CollisionV2 } from "./collision/collision";
 import { CollisionType } from "./collision/collisionType";
 import { MovingCollisionElement } from "./collision/movingCollisionElement";
+import { DefaultGameElement } from "./elements/gameElement";
 import { GameElementState } from "./elements/gameElementState";
-import { RenderElementImpl } from "./elements/renderElement";
+import { RenderArea } from "./elements/renderArea";
+import { RenderElement } from "./elements/renderElement";
 import { RenderPrio } from "./elements/renderPrio";
+import { RenderData } from "./render/renderData";
 import { SavePoint } from "./savePoint";
 import { FocusElement } from "./util/focusElement";
 import { Timer } from "./util/timer";
 
-export class Figure extends RenderElementImpl implements FocusElement, MovingCollisionElement {
+export class Figure extends DefaultGameElement implements FocusElement, MovingCollisionElement, RenderElement {
     private _animation: FigureAnimation;
     private _initialX: number;
+    private _prevRenderData: RenderData | undefined;
     get renderPrio(): RenderPrio {
         return RenderPrio.hight;
     }
@@ -60,6 +64,39 @@ export class Figure extends RenderElementImpl implements FocusElement, MovingCol
         this._initialY = y;
         this._initialX = x;
     }
+    get prevRenderData(): RenderData | undefined {
+        return this._prevRenderData;
+    }
+    shouldRender(renderArea: RenderArea) {    
+        let should = this.x >= renderArea.xStart - this.width && this.x <= renderArea.xEnd && this.y >= renderArea.yStart + this.height && this.y <= renderArea.yEnd;
+        return should;
+    }
+    get x(): number {
+        return this._x;
+    }
+    get y(): number {
+        return this._y;
+    }
+    handleResize(heightChange: number): void {
+        this._y += heightChange;
+    }
+    get renderData(): RenderData | undefined {
+        const jumpStrength = this.ApproximateJumpStrength(100 * (this._spaceTimer.millseconds / Figure.FullJumpLoadTime));
+        const isLoadingJump = jumpStrength > Figure.SmallJumpStrength && !this._isJumping;
+        const isLoadingFullJump = isLoadingJump && jumpStrength > Figure.MediumJumpStrength;
+        this._prevRenderData = this._animation.renderNextFrame({
+            isLoadingJump,
+            isLoadingFullJump,
+            jumpDirection: this._direction,
+            x: Math.round(this.x),
+            y: Math.round(this.y),
+            width: this.width,
+            height: this.height,
+            prevRenderData: this.prevRenderData
+        });
+        return this._prevRenderData;
+    }
+
     get speedX(): number {
         return this._speedX;
     }
@@ -206,21 +243,6 @@ export class Figure extends RenderElementImpl implements FocusElement, MovingCol
         }
     }
 
-    render(context: CanvasRenderingContext2D): void {
-        const jumpStrength = this.ApproximateJumpStrength(100 * (this._spaceTimer.millseconds / Figure.FullJumpLoadTime));
-        const isLoadingJump = jumpStrength > Figure.SmallJumpStrength && !this._isJumping;
-        const isLoadingFullJump = isLoadingJump && jumpStrength > Figure.MediumJumpStrength;
-        this._animation.renderNextFrame(context, {
-            isLoadingJump,
-            isLoadingFullJump,
-            jumpDirection: this._direction,
-            x: Math.round(this.x),
-            y: Math.round(this.y),
-            width: this.width,
-            height: this.height
-        });
-    }
-
     state: GameElementState = GameElementState.Active;
 
     private _calculationTimeStamp = 0;
@@ -357,9 +379,5 @@ export class Figure extends RenderElementImpl implements FocusElement, MovingCol
                 this._speedX = -this._speedX;
             }
         }
-    }
-
-    shouldRender(renderAreaXStart: number, renderAreaYStart: number, renderAreaXEnd: number, renderAreaYEnd: number): boolean {
-        return super.shouldRender(renderAreaXStart - this._width, renderAreaYStart + this._height, renderAreaXEnd, renderAreaYEnd);
     }
 }

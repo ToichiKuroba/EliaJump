@@ -1,7 +1,11 @@
 import { GameElementState } from "./elements/gameElementState";
 import { RenderElementImpl } from "./elements/renderElement";
+import { RenderMap } from "./render/renderMap";
 
 export class End extends RenderElementImpl {
+    protected get rendererKey(): keyof RenderMap {
+        return "End";
+    }
     get width(): number {
         return 0;
     }
@@ -18,14 +22,7 @@ export class End extends RenderElementImpl {
     get height(): number {
         return 200;
     }
-    render(context: CanvasRenderingContext2D): void {
-        context.save();
-        context.font = "100px Ariel";
-        context.fillStyle = "#81678e";
-        context.fillText("This is the end!", this._x, this._y);
-        context.fillText("Thanks for playing", this._x , this._y + 120);
-        context.restore();
-    }
+
     state: GameElementState = GameElementState.Inactive;
     calculateNextFrame(): void {
     }

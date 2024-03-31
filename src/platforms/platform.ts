@@ -1,7 +1,11 @@
 import { GameElementState } from "../elements/gameElementState";
 import { RenderElement, RenderElementImpl } from "../elements/renderElement";
+import { RenderMap } from "../render/renderMap";
 
 export class Platform extends RenderElementImpl {
+    protected get rendererKey(): keyof RenderMap{
+        return "Platform";
+    }
     get canCollide(): boolean {
         return true;
     }
@@ -26,21 +30,7 @@ export class Platform extends RenderElementImpl {
     get height(): number {
         return this._height;
     }
-
-    render(context: CanvasRenderingContext2D): void {
-        context.beginPath();
-        context.roundRect(Math.round(this.x), Math.round(this._y), this._width, this._height, 20);
-        context.fillStyle = "#fff";
-        context.fill();
-        context.closePath();
-    }
-
     state: GameElementState = GameElementState.Inactive;
     calculateNextFrame(): void { 
-    }
-
-
-    shouldRender(renderAreaXStart: number, renderAreaYStart: number, renderAreaXEnd: number, renderAreaYEnd: number): boolean {
-        return super.shouldRender(renderAreaXStart - this._width, renderAreaYStart + this._height, renderAreaXEnd, renderAreaYEnd);
     }
 }

@@ -1,21 +1,22 @@
 import { AnimationData } from "./animationData";
+import { AnimationRenderData } from "./animationRender";
 
 export interface Animation {
     start(): void;
-    renderNextFrame(context: CanvasRenderingContext2D, data: AnimationData) : void;
+    renderNextFrame(data: AnimationData) : AnimationRenderData | undefined;
     stop(): void;
     pause(): void;
 }
 
 export abstract class BaseAnimation<AnimationDataType extends AnimationData> implements Animation {
-    protected abstract get frames() : HTMLImageElement[];
+    protected abstract get frames() : string[];
     protected abstract get defaultPosition() : number;
     private _currentFrameCounter: number = 0;
     protected get currentFrame() {
         if(this.defaultPosition < 0) {
             throw new Error("defaultPosition can not be less than 0!");
         }else if(this.defaultPosition > this.frames.length) {
-            throw new Error("defaultPosition can not be lonter than frames.length!");
+            throw new Error("defaultPosition can not be bigger than frames.length!");
         }
  
         const currentFrame = this.defaultPosition + this._currentFrameCounter;
@@ -37,12 +38,12 @@ export abstract class BaseAnimation<AnimationDataType extends AnimationData> imp
         this._lastFrameChange = Date.now();
     }
 
-    renderNextFrame(context: CanvasRenderingContext2D, data: AnimationDataType): void {
+    renderNextFrame(data: AnimationDataType): AnimationRenderData | undefined {
         if(this.frames.length <= 0) {
             return;
         }
         
-        context.drawImage(this.frames[this.currentFrame], data.x, data.y, data.width, data.height);  
+        const frame = this.frames[this.currentFrame];
         if(this.frames.length > 1 && this._lastFrameChange && Date.now() - this._lastFrameChange > this.changeInterval) {
             this._lastFrameChange = Date.now();
             this._currentFrameCounter += this._direction;
@@ -53,6 +54,10 @@ export abstract class BaseAnimation<AnimationDataType extends AnimationData> imp
                 this._currentFrameCounter += this._direction;
             }
         }
+
+        const positionChanged = data.prevRenderData?.x != data.x || data.prevRenderData.y != data.y || data.prevRenderData.width != data.width || data.prevRenderData.height != data.height;
+
+        return { ...data, frame: frame, rendererKey: "Animation", transferables: [], needsRerender: positionChanged, prevRenderData: {... data.prevRenderData, prevRenderData: undefined} };
     }
     stop(): void {
         this._lastFrameChange = undefined;

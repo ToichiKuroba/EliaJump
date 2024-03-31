@@ -1,5 +1,6 @@
 import { BaseAnimation } from "./animation";
 import { AnimationData } from "./animationData";
+import { AnimationRenderData } from "./animationRender";
 
 export interface FigureAnimationData extends AnimationData {
     isLoadingJump: boolean,
@@ -8,14 +9,14 @@ export interface FigureAnimationData extends AnimationData {
 }
 
 export abstract class FigureAnimation extends BaseAnimation<FigureAnimationData> {
-    protected abstract get loadingJumpFrames() : [defaultPosition: number, frames: HTMLImageElement[]];
-    protected abstract get loadingFullJumpFrames() :[defaultPosition: number,  HTMLImageElement[]];
-    protected abstract get loadingSideJumpFrames() : [defaultPosition: number, HTMLImageElement[]];
-    protected abstract get loadingSideFullJumpFrames() : [defaultPosition: number, HTMLImageElement[]];
-    protected abstract get defaultFrames() : [defaultPosition: number, HTMLImageElement[]];
-    protected abstract get defaultSideFrames() : [defaultPosition: number, HTMLImageElement[]];
+    protected abstract get loadingJumpFrames() : [defaultPosition: number, frames: string[]];
+    protected abstract get loadingFullJumpFrames() :[defaultPosition: number,  frames: string[]];
+    protected abstract get loadingSideJumpFrames() : [defaultPosition: number, frames: string[]];
+    protected abstract get loadingSideFullJumpFrames() : [defaultPosition: number, frames: string[]];
+    protected abstract get defaultFrames() : [defaultPosition: number,  frames: string[]];
+    protected abstract get defaultSideFrames() : [defaultPosition: number, frames: string[]];
 
-    protected frames: HTMLImageElement[] = [];
+    protected frames: string[] = [];
     protected defaultPosition: number = 0;
     private _width: number;
     private _baseHeight: number;
@@ -26,8 +27,7 @@ export abstract class FigureAnimation extends BaseAnimation<FigureAnimationData>
         this._baseHeight = baseHeight;
     }
 
-    renderNextFrame(context: CanvasRenderingContext2D, data: FigureAnimationData): void {
-        context.save();
+    renderNextFrame(data: FigureAnimationData): AnimationRenderData | undefined {
         let height = this._baseHeight;
         [this.defaultPosition, this.frames] = this.defaultFrames;
         if(data.isLoadingFullJump) {
@@ -43,14 +43,15 @@ export abstract class FigureAnimation extends BaseAnimation<FigureAnimationData>
         let x = data.x - (this._width - data.width) / 2;
         let y = data.y + (data.height - height);
 
+        let fliped = false;
         if(data.jumpDirection > 0) {
-            context.scale(-1, 1);
-            
-            x *= -1;
-            x -= this._width;
+            fliped = true;
         }
 
-        super.renderNextFrame(context, {...data, x, y, width: this._width, height: height});
-        context.restore();
+        const renderData = super.renderNextFrame({...data, x, y, width: this._width, height: height});
+        if(renderData) {
+            renderData.fliped = fliped;
+            return renderData;
+        }
     }
 }

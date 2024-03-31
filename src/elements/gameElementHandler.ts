@@ -1,21 +1,61 @@
-import { GameField } from "../gameFlied";
-import { iterateEnum } from "../util/iterateEnum";
+import { RenderData } from "../render/renderData";
+import { RenderElementDatas } from "./renderElementDatas";
 import { DomElement } from "./domElement";
 import { GameElement } from "./gameElement";
 import { AddedElementEvent, GameElementEvent } from "./gameElementEventMap";
 import { GameElementState } from "./gameElementState";
 import { MetaElement } from "./metaElement";
-import { isRenderElement } from "./renderElement";
+import { RenderElement, isRenderElement } from "./renderElement";
 import { RenderPrio } from "./renderPrio";
+import { RenderArea } from "./renderArea";
 
 export class GameElementHandler extends MetaElement {
     private _elements: GameElement[] = [];
-    private _priotizedElements = new Map<RenderPrio, GameElement[]>();
+    private _renderElements: RenderElement[] = [];
+    private _notRenderElements: GameElement[] = [];
     private _metaElements: MetaElement[] = [];
     private _topY = 0;
 
     get topY() {
         return this._topY;
+    }
+
+    getRenderElementDatas(renderArea: RenderArea): RenderElementDatas {
+        const data = new Map<RenderPrio, RenderData[]>();
+        let transferables: Transferable[] = [];
+        for (let index = 0; index < this._renderElements.length; index++) {
+            const element = this._renderElements[index];
+            const prio = element.renderPrio;
+            if(!element.shouldRender(renderArea)) {
+                continue;
+            }
+
+            let renderDatas = data.get(prio);
+            if (!renderDatas) {
+                renderDatas = [];
+                data.set(prio, renderDatas);
+            }
+
+            const renderData = element.renderData;
+            if (renderData) {
+                renderDatas.push(renderData);
+                if(renderData.transferables.length){ 
+                    transferables = [...transferables, ...renderData.transferables];
+                }
+            }
+        }
+
+        let renderElements = [data];
+        for (let index = 0; index < this._metaElements.length; index++) {
+            const element = this._metaElements[index];
+            if (element instanceof GameElementHandler) {
+                let data = element.getRenderElementDatas(renderArea);
+                renderElements = [...renderElements, ...data.datas];
+                transferables = [...transferables, ...data.transferables];
+            }
+        }
+
+        return { datas: renderElements, transferables: transferables };
     }
 
     handleResize(heightChange: number) {
@@ -40,25 +80,16 @@ export class GameElementHandler extends MetaElement {
         }
     }
 
-    render(gameField: GameField): void {
-        iterateEnum(RenderPrio).forEach((enumValue) => {
-            this.renderElements(gameField, enumValue as RenderPrio);
-        });
-    }
-
-    renderElements(gameField: GameField, prioToRender: RenderPrio): void {
+    showNotRenderElements(): void {
         for (let index = 0; index < this._metaElements.length; index++) {
             const metaElement = this._metaElements[index];
-            metaElement.renderElements(gameField, prioToRender);
+            metaElement.showNotRenderElements();
         }
 
-        var renderElementsInPrio = this._priotizedElements.get(prioToRender) ?? [];
-        for (let index = 0; index < renderElementsInPrio.length; index++) {
-            const element = renderElementsInPrio[index];
+        for (let index = 0; index < this._notRenderElements.length; index++) {
+            const element = this._notRenderElements[index];
             if (element.state == GameElementState.Active || element.state == GameElementState.Inactive) {
-                if (isRenderElement(element)) {
-                    gameField.render(element);
-                }else if(element instanceof DomElement) {
+                if (element instanceof DomElement) {
                     element.refresh();
                 }
             }
@@ -66,8 +97,9 @@ export class GameElementHandler extends MetaElement {
     }
 
     calculateNextFrame(): void {
-        this._priotizedElements.clear();
+        this._renderElements = [];
         this._metaElements = [];
+        this._notRenderElements = [];
         for (let index = this._elements.length - 1; index >= 0; index--) {
             const element = this._elements[index];
             if (element instanceof MetaElement) {
@@ -75,24 +107,17 @@ export class GameElementHandler extends MetaElement {
                 element.calculateNextFrame();
             }
             else {
-                let prio = RenderPrio.normal;
-                if (isRenderElement(element)) {
-                    prio = element.renderPrio;
-                }
-
-                let renderElements = this._priotizedElements.get(prio);
-                if (!renderElements) {
-                    renderElements = [];
-                    this._priotizedElements.set(prio, renderElements);
-                }
-
-                renderElements.push(element);
-
                 if (element.state == GameElementState.Active) {
                     element.calculateNextFrame();
                 }
                 else if (element.state == GameElementState.Removed) {
                     element.dispose();
+                }
+
+                if (isRenderElement(element)) {
+                    this._renderElements.push(element);
+                } else {
+                    this._notRenderElements.push(element);
                 }
             }
 

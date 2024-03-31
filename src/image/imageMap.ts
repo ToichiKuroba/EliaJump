@@ -1,0 +1,1 @@
+export type ImageMap = Map<string, ImageBitmap>;

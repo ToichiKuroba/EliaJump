@@ -1,16 +1,30 @@
 import { DefaultGameElement } from "../elements/gameElement";
 import { GameElementState } from "../elements/gameElementState";
-import { RenderElement } from "../elements/renderElement";
+import { RenderArea } from "../elements/renderArea";
+import { RenderElement, extractRenderData } from "../elements/renderElement";
 import { RenderPrio } from "../elements/renderPrio";
+import { RenderData } from "../render/renderData";
 import { SavePointElement } from "../savePoint";
 import { Platform } from "./platform";
+import { SavePointPlatformRenderData } from "./savePointPlatformRender";
 
 export class SavePointPlatform extends DefaultGameElement implements RenderElement, SavePointElement {
     private _platform: Platform;
     private _isReached: boolean = false;
+    private _prevRenderData: RenderData | undefined;
     constructor(platform: Platform) {
         super();
         this._platform = platform;
+    }
+    get prevRenderData(): RenderData | undefined {
+        return this._prevRenderData;
+    }
+    shouldRender(renderArea: RenderArea): boolean {
+        return this._platform.shouldRender(renderArea);
+    }
+    get renderData(): RenderData {
+        this._prevRenderData =  {...extractRenderData(this, "SavePointPlatform"), isReached: this._isReached, platform: this._platform.renderData } as SavePointPlatformRenderData;
+        return this._prevRenderData;
     }
     get renderPrio(): RenderPrio {
         return RenderPrio.low;
@@ -20,10 +34,6 @@ export class SavePointPlatform extends DefaultGameElement implements RenderEleme
     }
     get canCollide(): boolean {
         return true;
-    }
-
-    shouldRender(renderAreaXStart: number, renderAreaYStart: number, renderAreaXEnd: number, renderAreaYEnd: number): boolean {
-        return this._platform.shouldRender(renderAreaXStart, renderAreaYStart, renderAreaXEnd, renderAreaYEnd);
     }
 
     get y() {
@@ -39,21 +49,6 @@ export class SavePointPlatform extends DefaultGameElement implements RenderEleme
     }
     get width(): number {
         return this._platform.width;
-    }
-    render(context: CanvasRenderingContext2D): void {
-        this._platform.render(context);
-        const path = "M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z";
-        const p = new Path2D(path);
-        context.save();
-        let x = this.x - 45;
-        if(this.x <= 0) {
-            x = this.x + this.width;
-        }
-        context.translate(x, this.y + this.height / 2 + 20);      
-        context.fillStyle = this._isReached ? "#79ada3" : "#fff"
-        context.scale(0.05, 0.05);
-        context.fill(p);
-        context.restore();
     }
     public get state(): GameElementState {
         return this._platform.state;

@@ -148,3 +148,8 @@ body, html {
     overflow: hidden;
     grid-area: game;
   }
+
+  .game canvas {
+    width: 100%;
+    height: 100%;
+  }

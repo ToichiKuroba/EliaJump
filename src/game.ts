@@ -13,6 +13,9 @@ import { Controlls } from "./controlls";
 import "external-svg-loader";
 import { ControllerHandler } from "./controller/controllerHandler";
 import { Controllbar } from "./controllbar";
+import { Time } from "./time";
+import { ImageHandler } from "./image/imageHandler";
+import renderWorker from "./workers/render?worker";
 
 function Init() {
     if (document.readyState == "complete") {
@@ -34,11 +37,15 @@ class Game {
     private readonly elementHandler: GameElementHandler;
     private readonly _gameField: GameField;
     private _savePointHandler: SavePointHandler | undefined;
+    private _imageHandler: ImageHandler;
+    private _renderWorker: Worker;
     constructor() {
         this.elementHandler = new GameElementHandler(); 
-        this._gameField = new GameField(document.querySelector<HTMLElement>(".game")!, this.elementHandler, this._dev);
+        this._renderWorker = new renderWorker();
+        this._gameField = new GameField(document.querySelector<HTMLElement>(".game")!, this.elementHandler, this._renderWorker);
         this.collisionHandler = new CollisionHandler(this._gameField);
         ControllerHandler.Instance.dev = this._dev;
+        this._imageHandler = new ImageHandler(this._renderWorker);
     }
 
     handleElementAdded = (ev: AddedElementEvent) => {
@@ -59,17 +66,20 @@ class Game {
         return this._isRunning;
     }
 
+    
+
     Start() {
         this.elementHandler.addEventListener("Added", this.handleElementAdded);
         this.elementHandler.addEventListener("Removed", this.handleElementRemoved);
         this._gameField.adjustSize();
         this._isRunning = true;
-        this.frameInterval = setInterval(() => {
+        this.frameInterval = setInterval(async () => {
             this._gameField.adjustSize();
             this.elementHandler.calculateNextFrame();
             this._savePointHandler?.checkSavePoint();
             this.collisionHandler.detectCollisions();
-            this._gameField.renderFrame();
+            this.elementHandler.showNotRenderElements();
+            await this._gameField.startRender();
         }, 10);
 
         this.RunGame();
@@ -93,7 +103,7 @@ class Game {
 
     private RunGame() {
         let streamPlatform: StreamPlatformField | undefined;
-        const player = new Figure(0, this._gameField.bottom - 50, new StarlingAnimation());
+        const player = new Figure(0, this._gameField.bottom - 50, new StarlingAnimation(this._imageHandler));
         this._gameField.follow(player);
         this.elementHandler.add(player);
         ControllerHandler.Instance.controll(player);
@@ -121,6 +131,10 @@ class Game {
             this.elementHandler.add(controllbar);
         }
 
+        const timeElement = document.querySelector<HTMLDivElement>(".time");
+        if(timeElement){
+            this.elementHandler.add(new Time(timeElement));
+        }
         this.elementHandler.subElementInitialize();
 
         this._savePointHandler?.returnToSavePoint();
