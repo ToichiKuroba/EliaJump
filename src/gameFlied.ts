@@ -1,3 +1,4 @@
+import { ColorHandler } from "./colorHandler";
 import { GameElementHandler } from "./elements/gameElementHandler";
 import { FocusElement } from "./util/focusElement";
 import { AsyncRenderData } from "./workers/asyncRenderData";
@@ -11,8 +12,6 @@ export class GameField {
     private readonly _gameFrame: HTMLElement;
     private static YTranslationOffsetMultiplier = 0.25;
     private static CameraAcceleration = 10;
-    private static gradientStartColor = "#bca0b6";
-    private static gradientEndColor = "#e2d7dd";
     yTranslation = 0;
     nextYTranslation = 0;
     private readonly _elementHandler: GameElementHandler;
@@ -23,6 +22,7 @@ export class GameField {
     private _lastHeight: number;
     private _lastWidth: number;
     private _renderPromise: Promise<any> | null = null;
+    private _colorHandler: ColorHandler;
     get bottom() {
         return this._canvas.clientHeight;
     }
@@ -92,6 +92,7 @@ export class GameField {
         this._lastHeight = this._canvas.height;
         const offscreen = this._canvas.transferControlToOffscreen();
         this._renderWorker.postMessage({canvas: offscreen}, [offscreen]);
+        this._colorHandler = new ColorHandler(this._canvas);
     }
 
     async startRender() {
@@ -101,7 +102,7 @@ export class GameField {
             await this._renderPromise;
         }
 
-        this._renderWorker.postMessage({render: {renderData: datas.datas, prevYTranslation, yTranslation} as AsyncRenderData}, datas.transferables);
+        this._renderWorker.postMessage({render: {renderData: datas.datas, prevYTranslation, yTranslation, colorMap: this._colorHandler.colorMap} as AsyncRenderData}, datas.transferables);
         this._renderPromise = new Promise((resolve) => {
             let timeout = setTimeout(resolve, 10);
             this._renderWorker.onmessage = ({data}) => {
@@ -152,8 +153,6 @@ export class GameField {
     }
 
     addToTranslate(element: HTMLElement){
-        element.style.setProperty("--gradientStart", GameField.gradientStartColor);
-        element.style.setProperty("--gradientEnd", GameField.gradientEndColor);
         this._translateElements.push(element);
     }
 

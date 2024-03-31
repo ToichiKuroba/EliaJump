@@ -18,7 +18,8 @@
     height: 40px;
 }
 
-.controllbar .icon:hover {
+.controllbar .icon:hover,
+.open .icon {
   cursor: pointer;
   fill: #1d9bf0;
   background-color: #1d9bf01a;
@@ -28,3 +29,18 @@
     width: 50px;
     align-items: flex-start;
 }
+
+
+.controllbar .controllbarBox {
+    position:absolute;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+  }
+
+  .controllbar :not(.open) .controllbarBox {
+    display: none;
+  }

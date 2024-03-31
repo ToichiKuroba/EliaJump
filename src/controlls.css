@@ -24,26 +24,4 @@
     width: 20px;
   }
 
-  .controlls .controllsIcon:hover,
-  .controlls.open .controllsIcon {
-    cursor: pointer;
-    fill: #1d9bf0;
-    background-color: #1d9bf01a;
-  }
 
-  .controlls.closed .controllsImg {
-    display: none;
-  }
-
-  .controlls .controllsImg {
-    position:absolute;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: auto;
-    margin-bottom: auto;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    text-align: center;
-  }

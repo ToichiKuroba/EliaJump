@@ -1,4 +1,5 @@
 import { RenderPrio } from "./elements/renderPrio";
+import { RenderContext } from "./render/renderContext";
 import { RenderData } from "./render/renderData";
 import { RenderMap } from "./render/renderMap";
 import { iterateEnum } from "./util/iterateEnum";
@@ -56,11 +57,11 @@ export class OffscreenRenderer implements AsyncRenderer {
         this._clearedAreas = [];
         if (this._context) {
             this.translateScreen(this._context, data.prevYTranslation, data.yTranslation);
-            this.renderPriorities(this._context, data.renderData);
+            this.renderPriorities({drawContext: this._context, colorMap: data.colorMap}, data.renderData);
         }
     }
 
-    renderPriorities(context: OffscreenCanvasRenderingContext2D, renderData: Map<RenderPrio, RenderData[]>[]) {
+    renderPriorities(context: RenderContext, renderData: Map<RenderPrio, RenderData[]>[]) {
 
         let renderer: (() => void)[] = [];
         iterateEnum(RenderPrio).forEach(prio => {
@@ -79,7 +80,7 @@ export class OffscreenRenderer implements AsyncRenderer {
         }
     }
 
-    renderElements(context: OffscreenCanvasRenderingContext2D, renderData: RenderData[]): (() => void)[] {
+    renderElements(context: RenderContext, renderData: RenderData[]): (() => void)[] {
         let rtn: (() => void)[] = [];
         for (let index = 0; index < renderData.length; index++) {
             rtn.push(this.render(context, renderData[index]));
@@ -88,10 +89,10 @@ export class OffscreenRenderer implements AsyncRenderer {
         return rtn;
     }
 
-    render(context: OffscreenCanvasRenderingContext2D, renderData: RenderData): (() => void) {
+    render(context: RenderContext, renderData: RenderData): (() => void) {
         const render = this._renderMap[renderData.rendererKey];
         if (renderData.needsRerender && renderData.prevRenderData) {
-            this.clearArea(context, renderData.prevRenderData.y, renderData.prevRenderData.height);
+            this.clearArea(context.drawContext, renderData.prevRenderData.y, renderData.prevRenderData.height);
         }
         return () => {
             if (renderData.needsRerender || this.isInClearedArea(renderData) || !renderData.prevRenderData) {

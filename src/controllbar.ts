@@ -6,6 +6,7 @@ import { Figure } from "./figure";
 import { ResetButton } from "./resetButton";
 import { SavePointHandler } from "./savePointHandler";
 import { ResetWarning } from "./resetWarning";
+import { LeaderBoard } from "./leaderBoard";
 
 export class Controllbar extends GameElementHandler {
   private _parent: HTMLElement;
@@ -36,6 +37,13 @@ export class Controllbar extends GameElementHandler {
             const resetWarning = new ResetWarning(resetWarningElement, this._savePointHandler, this._player);
             ControllerHandler.Instance.controll(resetWarning);
         }
+    }
+
+    const leaderBoardElement = this._parent.querySelector<HTMLDivElement>(".leaderBoard");
+    if(leaderBoardElement) {
+      const leaderBoard = new LeaderBoard(leaderBoardElement);
+      this.add(leaderBoard);
+      ControllerHandler.Instance.controll(leaderBoard);
     }
   }
 }

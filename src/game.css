@@ -2,6 +2,15 @@
 :root {  
   --light-gold-rgb: 249 181 51;
   --dark-gold-rgb: 215 147 23;
+  --background-color: #536471;
+  --border-color: #81678e;
+  --gameField-width: 1100px;
+  --gameField-background:  #e2d7dda1;
+  --primary-background-color: #fff;
+  --primary-font-color:  #000;
+  --secondary-background-color: #c69eda;
+  --secondary-font-color:  #fff;
+  --success-color: #79ada3;
 }
 
 @keyframes pan {
@@ -32,10 +41,10 @@ body, html {
 }
 
   canvas {
-    background-color: #e2d7dda1;
+    background-color: var(--gameField-background);
     display: block;
     margin: 0 auto;
-    border-left: 1px solid #81678e;
+    border-left: 1px solid var(--border-color);
     z-index: 2;
   }
 
@@ -44,8 +53,8 @@ body, html {
   }
   
   #star-pattern {
-    background-image: url("https://assets.codepen.io/1468070/Star+Pattern+3.svg");
-    background-color: #536471;
+    background-image: url("/StarPattern.svg");
+    background-color: var(--background-color);
     background-size: 10%;  
     position: absolute;
     left: 50%;
@@ -74,7 +83,7 @@ body, html {
   .main {
     flex-grow: 1;
     display: grid;
-    grid-template-columns: 1fr min-content 1100px 1fr;
+    grid-template-columns: 1fr min-content var(--gameField-width) 1fr;
     grid-template-rows: 40px 1fr 50px;
     grid-template-areas: 
     ". title title ."
@@ -84,7 +93,7 @@ body, html {
 
   .controllbar {
     grid-area: controllbar;
-    border-top: 1px solid #81678e;
+    border-top: 1px solid var(--border-color);
   }
 
   .title {
@@ -106,10 +115,8 @@ body, html {
   }
 
   .dayContainer {
-    --gradientStart: #fff;
-    --gradientEnd: #fff;
     --dayHeight: 0px;
-    background-color: #e2d7dda1;
+    background-color: var(--gameField-background);
     display: flex;
     flex-direction: column-reverse;
   }
@@ -127,8 +134,8 @@ body, html {
   .dayContainer .date {
     width: var(--platformHeight);
     height: var(--platformHeight);
-    background-color: #c69eda;
-    color: #fff;
+    background-color: var(--secondary-background-color);
+    color: var(--secondary-font-color);
     border-radius: 100%;
     display: flex;
     justify-content: center;
@@ -136,10 +143,10 @@ body, html {
   }
 
 .month {
-  border-bottom: 5px #81678e dotted;
+  border-bottom: 5px var(--border-color) dotted;
   width: 100%;
   margin-bottom: 5px;
-  color: #81678e;
+  color: var(--border-color);
   text-align: center;
   text-transform: uppercase;
 }

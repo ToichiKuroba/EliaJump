@@ -1,3 +1,4 @@
+import { RenderContext } from "../render/renderContext";
 import { RenderData } from "../render/renderData";
 import { TypedRenderer } from "../render/renderer";
 import { Stream } from "../util/stream";
@@ -43,32 +44,32 @@ export class StreamPlatformRender extends TypedRenderer<StreamPlatformRenderData
     }
 
 
-    protected _render(context: OffscreenCanvasRenderingContext2D, renderData: StreamPlatformRenderData): void {
+    protected _render(context: RenderContext, renderData: StreamPlatformRenderData): void {
         const baseX = renderData.x + 20;
         const baseY = renderData.y + 10;
         this._platformRender.render(context, renderData);
         const paddingTopBottom = 20;
         const fontSize = (renderData.height - paddingTopBottom * 2) / 2;
         const baseWidth = renderData.width - fontSize - 20;
-        context.fillStyle = "#000";
-        context.font = fontSize + "px arial";
+        context.drawContext.fillStyle = context.colorMap["primary-font-color"];
+        context.drawContext.font = fontSize + "px arial";
         const streamTime = this.getStreamTime(renderData.stream);
-        const measure = context.measureText(streamTime);
+        const measure = context.drawContext.measureText(streamTime);
         const paddingRight = measure.width + 10;
         const maxTitleWidth = baseWidth - paddingRight - 10;
         const normalizedTitle = this.normalizeTitle(renderData.stream);
-        let titleMeasure = context.measureText(normalizedTitle);
+        let titleMeasure = context.drawContext.measureText(normalizedTitle);
         const words = normalizedTitle.split(" ");
         let breakIndex = words.length - 1;
         let titleLine1 = normalizedTitle;
         let titleLine2 = "";
         while (titleMeasure.width > maxTitleWidth && breakIndex > 0) {
             [titleLine1, titleLine2] = this.breakText(words, breakIndex);
-            titleMeasure = context.measureText(titleLine1);
+            titleMeasure = context.drawContext.measureText(titleLine1);
             breakIndex--;
         }
 
-        const title2Measure = context.measureText(titleLine2);
+        const title2Measure = context.drawContext.measureText(titleLine2);
         if (title2Measure.width > maxTitleWidth) {
             [titleLine1, titleLine2] = this.breakText(words, words.length / 2);
         }
@@ -77,19 +78,19 @@ export class StreamPlatformRender extends TypedRenderer<StreamPlatformRenderData
         const secondLineY = y + fontSize + 5;
         const titleX = baseX + fontSize;
 
-        context.save();
-        context.textAlign = 'right';
-        context.translate(baseX, y - 10);
-        context.rotate(-Math.PI / 2);
-        context.fillText(this.getWeekday(renderData.stream), 0, 0, renderData.height);
-        context.restore();
+        context.drawContext.save();
+        context.drawContext.textAlign = 'right';
+        context.drawContext.translate(baseX, y - 10);
+        context.drawContext.rotate(-Math.PI / 2);
+        context.drawContext.fillText(this.getWeekday(renderData.stream), 0, 0, renderData.height);
+        context.drawContext.restore();
 
-        context.fillText(titleLine1, titleX, y, maxTitleWidth);
+        context.drawContext.fillText(titleLine1, titleX, y, maxTitleWidth);
         if (titleLine2.length) {
-            context.fillText(titleLine2, titleX, secondLineY, maxTitleWidth);
+            context.drawContext.fillText(titleLine2, titleX, secondLineY, maxTitleWidth);
         }
-        context.fillText(streamTime, titleX + baseWidth - paddingRight, y, baseWidth - paddingRight);
-        context.fillText("GMT", titleX + baseWidth - paddingRight, secondLineY, baseWidth - paddingRight);
+        context.drawContext.fillText(streamTime, titleX + baseWidth - paddingRight, y, baseWidth - paddingRight);
+        context.drawContext.fillText("GMT", titleX + baseWidth - paddingRight, secondLineY, baseWidth - paddingRight);
     }
 
 }
