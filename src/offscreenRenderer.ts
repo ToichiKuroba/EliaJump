@@ -19,6 +19,7 @@ export class OffscreenRenderer implements AsyncRenderer {
     private _renderMap: RenderMap;
     private _dpr: number = 1;
     private _clearedAreas: ClearedArea[] = [];
+    private _fullRerender = true;
     constructor(canvas: OffscreenCanvas, renderMap: RenderMap) {
         this._canvas = canvas;
         this._context = canvas.getContext("2d");
@@ -47,9 +48,10 @@ export class OffscreenRenderer implements AsyncRenderer {
             this._canvas.width += widthAdjustment;
         }
 
-        if (this._context) {
+        if (heightAdjustment != 0 && widthAdjustment != 0 && this._context) {
             this._context.scale(dpr, dpr);
             this.translateScreen(this._context, 0, yTranslation);
+            this._fullRerender = true;
         }
     }
 
@@ -78,6 +80,8 @@ export class OffscreenRenderer implements AsyncRenderer {
             const render = renderer[index];
             render();
         }
+
+        this._fullRerender = false;
     }
 
     renderElements(context: RenderContext, renderData: RenderData[]): (() => void)[] {
@@ -102,6 +106,10 @@ export class OffscreenRenderer implements AsyncRenderer {
     }
 
     isInClearedArea(renderData: RenderData) {
+        if(this._fullRerender) {
+            return true;
+        }
+
         for (let index = 0; index < this._clearedAreas.length; index++) {
             const clearedArea = this._clearedAreas[index];
             const yEnd = renderData.y + renderData.height;
