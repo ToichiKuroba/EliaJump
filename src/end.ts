@@ -1,5 +1,4 @@
-import { Animation } from "./animation/animation";
-import { EndStarlingAnimation, EndStarlingAnimationData } from "./animation/endStarlingAnimation";
+import { EndStarlingAnimation } from "./animation/endStarlingAnimation";
 import { GameElementHandler } from "./elements/gameElementHandler";
 import { GameElementState } from "./elements/gameElementState";
 import { RenderElementImpl } from "./elements/renderElement";

@@ -21,11 +21,17 @@ export class EndRender extends TypedRenderer<EndRenderData> {
         context.drawContext.beginPath();
         context.drawContext.font = "50px Arial";
         context.drawContext.fillStyle = renderData.reached ? context.colorMap["success-color"] : context.colorMap["primary-font-color"];
-        const text = convertToTimeString(renderData.time);
-        const measure = context.drawContext.measureText(text);
-        let actualHeight = measure.actualBoundingBoxAscent + measure.actualBoundingBoxDescent;
-        const x = renderData.x + (renderData.width / 2) - (measure.width / 2);
-        context.drawContext.fillText(text, x, renderData.y + actualHeight + renderData.height);
+        const text = "Your time:";
+        const timeText = convertToTimeString(renderData.time);
+        const timeMeasure = context.drawContext.measureText(timeText);
+        const textMeasure = context.drawContext.measureText(text);
+        const gap = 10;
+        let actualTextHeight = textMeasure.actualBoundingBoxAscent + textMeasure.actualBoundingBoxDescent;
+        let actualTimeHeight = timeMeasure.actualBoundingBoxAscent + timeMeasure.actualBoundingBoxDescent + actualTextHeight + gap;
+        const textX = renderData.x + (renderData.width / 2) - (textMeasure.width / 2);
+        const timeX = renderData.x + (renderData.width / 2) - (timeMeasure.width / 2);
+        context.drawContext.fillText(text, textX, renderData.y + actualTextHeight + renderData.height);
+        context.drawContext.fillText(timeText, timeX, renderData.y + actualTimeHeight + renderData.height);
         context.drawContext.closePath();
         this._animationRender.render(context, renderData.animationData);
     }

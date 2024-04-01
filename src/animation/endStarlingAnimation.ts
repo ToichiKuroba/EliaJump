@@ -1,4 +1,3 @@
-import prand from "pure-rand";
 import { ImageHandler } from "../image/imageHandler";
 import { BaseAnimation } from "./animation";
 import { AnimationData } from "./animationData";
@@ -21,7 +20,6 @@ export class EndStarlingAnimation extends BaseAnimation<EndStarlingAnimationData
     private _frames: string[];
     private _directionX= 1;
     static BaseSeed = 1223414.323221;
-    private speedY = 0;
     constructor(imageHandler: ImageHandler){
         super(200);        
         const bitmapOptions: ImageBitmapOptions =  {resizeHeight:EndStarlingAnimation.Height * 2, resizeWidth:  EndStarlingAnimation.Width * 2};
