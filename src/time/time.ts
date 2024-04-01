@@ -36,7 +36,11 @@ export class Time extends DomElement<"div"> implements TimeHandler {
     }
 
     refresh(): void {
-        this.element.innerText = convertToTimeString(this._time);
+        if(this.time == 0) {
+            this.element.innerText = "";
+        }else {
+            this.element.innerText = convertToTimeString(this._time);
+        }
     }
 
     state: GameElementState = GameElementState.Inactive;
