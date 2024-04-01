@@ -7,7 +7,7 @@ import { convertToTimeString } from "./util/convertToTimeString";
 export interface EndRenderData extends RenderData {
     reached: boolean,
     time: number,
-    animationData: AnimationRenderData
+    animationData: AnimationRenderData | undefined
 }
 
 export class EndRender extends TypedRenderer<EndRenderData> {
@@ -33,7 +33,9 @@ export class EndRender extends TypedRenderer<EndRenderData> {
         context.drawContext.fillText(text, textX, renderData.y + actualTextHeight + renderData.height);
         context.drawContext.fillText(timeText, timeX, renderData.y + actualTimeHeight + renderData.height);
         context.drawContext.closePath();
-        this._animationRender.render(context, renderData.animationData);
+        if(renderData.animationData) {
+            this._animationRender.render(context, renderData.animationData);
+        }
     }
 
 }

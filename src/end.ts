@@ -1,3 +1,4 @@
+import { AnimationRenderData } from "./animation/animationRender";
 import { EndStarlingAnimation } from "./animation/endStarlingAnimation";
 import { GameElementHandler } from "./elements/gameElementHandler";
 import { GameElementState } from "./elements/gameElementState";
@@ -31,19 +32,23 @@ export class End extends RenderElementImpl {
     private _prevEndRenderData: EndRenderData | undefined;
     private _run: Run | undefined;
     get renderData(): RenderData | undefined {
-        const animationRenderData = this._animation.renderNextFrame({
-            figureX: this._player.x,
-            figureY: this._player.y,
-            prevRenderData: this._prevEndRenderData?.animationData,
-            height: this._animation.height,
-            width: this._animation.width,
-            x: this._prevEndRenderData?.animationData.x ?? this._player.x,
-            y: this._prevEndRenderData?.animationData.y ?? this._player.y,
-            limitX: this.x + this.width,
-            limitY: this.y,
-            startX: this.x,
-            startY: this.y + this.height
-        });
+        let animationRenderData: AnimationRenderData | undefined;
+        if (this.reached) {
+            animationRenderData = this._animation.renderNextFrame({
+                figureX: this._player.x,
+                figureY: this._player.y,
+                prevRenderData: this._prevEndRenderData?.animationData,
+                height: this._animation.height,
+                width: this._animation.width,
+                x: this._prevEndRenderData?.animationData?.x ?? this._player.x,
+                y: this._prevEndRenderData?.animationData?.y ?? this._player.y,
+                limitX: this.x + this.width,
+                limitY: this.y,
+                startX: this.x,
+                startY: this.y + this.height
+            });
+        }
+        
         const data = super.renderData;
         const time = this._run?.finalTime ?? this._runHandler.currentTime;
         const needsRerender = data?.needsRerender ? true : this._reached || this._prevEndRenderData?.time != time;
