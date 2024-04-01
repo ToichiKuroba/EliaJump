@@ -13,13 +13,12 @@ import { Controlls } from "./controlls";
 import "external-svg-loader";
 import { ControllerHandler } from "./controller/controllerHandler";
 import { Controllbar } from "./controllbar";
-import { Time, TimeHandler } from "./time/time";
+import { Time } from "./time/time";
 import { ImageHandler } from "./image/imageHandler";
 import renderWorker from "./workers/render?worker";
 import { RunHandler, RunHandlerImpl } from "./time/runHandler";
 import { RunHistoryImpl } from "./time/runHistory";
 import { End } from "./end";
-import { GameElement } from "./elements/gameElement";
 import { EndStarlingAnimation } from "./animation/endStarlingAnimation";
 
 function Init() {

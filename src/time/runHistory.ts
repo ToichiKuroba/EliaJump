@@ -58,7 +58,7 @@ export class RunHistoryImpl implements RunHistory {
         return new Promise((resolve, reject) => {
             this._db.then(db => {
                 const transaction = db.transaction(RunHistoryImpl.RunsObjectStoreName, "readwrite");
-                transaction.oncomplete = (ev) => resolve();
+                transaction.oncomplete = () => resolve();
                 transaction.onerror = (ev) => reject(ev.target);
                 transaction.objectStore(RunHistoryImpl.RunsObjectStoreName).add(run);
             });
@@ -93,7 +93,7 @@ export class RunHistoryImpl implements RunHistory {
 
                 const keyRange = finished !== undefined ? IDBKeyRange.only(finished) : undefined;
                 const transaction = db.transaction(RunHistoryImpl.RunsObjectStoreName, "readonly");
-                transaction.oncomplete = (ev) => resolve(runs);
+                transaction.oncomplete = () => resolve(runs);
                 transaction.onerror = (ev) => reject(ev.target);
                 transaction.objectStore(RunHistoryImpl.RunsObjectStoreName).openCursor(keyRange).onsuccess = (event) => {
                     if (!event || !event.target || !("result" in event.target) || !event.target.result) {

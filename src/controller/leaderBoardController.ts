@@ -8,4 +8,17 @@ export class LeaderBoardController extends ModalElementController {
         this._leaderBoard = leaderBoard;
     }
 
+    onclick = () => this._leaderBoard.toggleOpen();
+
+
+    addListeners(): void {
+        super.addListeners();
+        this._leaderBoard.modal?.addEventListener("click", this.onclick);
+    }
+
+    removeListeners(): void {
+        super.removeListeners();
+        this._leaderBoard.modal?.removeEventListener("click", this.onclick);
+    }
+
 }
