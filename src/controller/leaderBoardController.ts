@@ -1,4 +1,4 @@
-import { LeaderBoard } from "../leaderBoard";
+import { LeaderBoard } from "../time/leaderBoard";
 import { ModalElementController } from "./modalElementController";
 
 export class LeaderBoardController extends ModalElementController {

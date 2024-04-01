@@ -29,6 +29,8 @@ export class AddedElementEvent extends MetaElementEvent<"Added"> {
 
 export interface GameElementEventMap {
     "Removed": GameElementEvent<"Removed">;
+    "PauseListeners": GameElementEvent<"PauseListeners">;
+    "ResumeListeners": GameElementEvent<"ResumeListeners">;
 }
 
 export interface MetaElementEventMap extends GameElementEventMap {

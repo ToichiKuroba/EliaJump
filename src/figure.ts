@@ -3,12 +3,14 @@ import { CollisionV2 } from "./collision/collision";
 import { CollisionType } from "./collision/collisionType";
 import { MovingCollisionElement } from "./collision/movingCollisionElement";
 import { DefaultGameElement } from "./elements/gameElement";
+import { GameElementEvent } from "./elements/gameElementEventMap";
 import { GameElementState } from "./elements/gameElementState";
 import { RenderArea } from "./elements/renderArea";
 import { RenderElement } from "./elements/renderElement";
 import { RenderPrio } from "./elements/renderPrio";
 import { RenderData } from "./render/renderData";
 import { SavePoint } from "./savePoint";
+import { RunHandler } from "./time/runHandler";
 import { FocusElement } from "./util/focusElement";
 import { Timer } from "./util/timer";
 
@@ -16,6 +18,7 @@ export class Figure extends DefaultGameElement implements FocusElement, MovingCo
     private _animation: FigureAnimation;
     private _initialX: number;
     private _prevRenderData: RenderData | undefined;
+    private _runHandler: RunHandler | undefined;
     get renderPrio(): RenderPrio {
         return RenderPrio.hight;
     }
@@ -56,19 +59,30 @@ export class Figure extends DefaultGameElement implements FocusElement, MovingCo
     private _isDoubleJumping = false;
     private _direction = 0;
     private _ignoreCollision = false;
-    constructor(x: number, y: number, figureAnimation: FigureAnimation) {
+    constructor(x: number, y: number, figureAnimation: FigureAnimation, runHandler?: RunHandler) {
         super();
         this._animation = figureAnimation;
         this._x = x;
         this._y = y;
         this._initialY = y;
         this._initialX = x;
+        this._runHandler = runHandler;
     }
     get prevRenderData(): RenderData | undefined {
         return this._prevRenderData;
     }
+    pause() {
+        this.endMove();
+        this.endJump();
+        this.state = GameElementState.Inactive;
+        this.dispatchEvent(new GameElementEvent<"PauseListeners">("PauseListeners", this));
+    }    
+    resume() {
+        this.state = GameElementState.Active;
+        this.dispatchEvent(new GameElementEvent<"ResumeListeners">("ResumeListeners", this));
+    }
     shouldRender(renderArea: RenderArea) {    
-        let should = this.x >= renderArea.xStart - this.width && this.x <= renderArea.xEnd && this.y >= renderArea.yStart + this.height && this.y <= renderArea.yEnd;
+        let should = this.state == GameElementState.Active && this.x >= renderArea.xStart - this.width && this.x <= renderArea.xEnd && this.y >= renderArea.yStart + this.height && this.y <= renderArea.yEnd;
         return should;
     }
     get x(): number {
@@ -156,6 +170,7 @@ export class Figure extends DefaultGameElement implements FocusElement, MovingCo
 
     startJumpLoad(direction: "left" | "up" | "right") {
         if (!this._spaceTimer.isRunning) {
+            this._runHandler?.start();
             if (!this._isJumping) {
                 this.setDirection(direction);
                 this._spaceTimer.Start();

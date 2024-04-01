@@ -5,8 +5,10 @@ import { ControllerHandler } from "./controller/controllerHandler";
 import { Figure } from "./figure";
 import { SavePointHandler } from "./savePointHandler";
 import { ResetWarning } from "./resetWarning";
-import { LeaderBoard } from "./leaderBoard";
+import { LeaderBoard } from "./time/leaderBoard";
 import { GameElement } from "./elements/gameElement";
+import { RunHandler } from "./time/runHandler";
+import { End } from "./end";
 
 export interface ControllbarElement extends GameElement {
   get open(): boolean,
@@ -19,11 +21,15 @@ export class Controllbar extends GameElementHandler {
     private _savePointHandler: SavePointHandler;
     private _controllbarElements: ControllbarElement[] = [];
     private _openElement: ControllbarElement | null = null;
-  constructor(parent: HTMLElement, player: Figure, savePointHandler: SavePointHandler) {
+  private _runHandler: RunHandler;
+  private _end: End;
+  constructor(parent: HTMLElement, player: Figure, savePointHandler: SavePointHandler, runHandler: RunHandler, end: End) {
     super();
     this._parent = parent;
     this._player = player;
     this._savePointHandler = savePointHandler;
+    this._runHandler = runHandler;
+    this._end = end;
   }
 
   calculateNextFrame(): void {
@@ -59,7 +65,7 @@ export class Controllbar extends GameElementHandler {
 
     const resetWarningElement = this._parent.querySelector<HTMLDivElement>(".restart");
     if(resetWarningElement) {
-        const resetWarning = new ResetWarning(resetWarningElement, this._savePointHandler, this._player);
+        const resetWarning = new ResetWarning(resetWarningElement, this._savePointHandler, this._player, this._runHandler, this._end);
         this.add(resetWarning);
         ControllerHandler.Instance.controll(resetWarning);
     }

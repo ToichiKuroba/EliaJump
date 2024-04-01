@@ -1,6 +1,12 @@
 export class SavePoint{
     private readonly _element : SavePointElement;
     private readonly _id: string;
+    private readonly _name: string;
+
+    
+    get name(): string {
+        return this._name;
+    }
 
     get id() {
         return this._id;
@@ -18,9 +24,10 @@ export class SavePoint{
         this._element.isReached = isReached;
     }
 
-    constructor(id: string, element : SavePointElement) {
+    constructor(id: string, name: string, element : SavePointElement) {
         this._element = element;
         this._id = id;
+        this._name = name;
     }
 }
 

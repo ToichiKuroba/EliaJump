@@ -13,9 +13,13 @@ import { Controlls } from "./controlls";
 import "external-svg-loader";
 import { ControllerHandler } from "./controller/controllerHandler";
 import { Controllbar } from "./controllbar";
-import { Time } from "./time";
+import { Time, TimeHandler } from "./time/time";
 import { ImageHandler } from "./image/imageHandler";
 import renderWorker from "./workers/render?worker";
+import { RunHandler, RunHandlerImpl } from "./time/runHandler";
+import { RunHistoryImpl } from "./time/runHistory";
+import { End } from "./end";
+import { GameElement } from "./elements/gameElement";
 
 function Init() {
     if (document.readyState == "complete") {
@@ -39,6 +43,7 @@ class Game {
     private _savePointHandler: SavePointHandler | undefined;
     private _imageHandler: ImageHandler;
     private _renderWorker: Worker;
+    private runHandler: RunHandler | undefined;
     constructor() {
         this.elementHandler = new GameElementHandler(); 
         this._renderWorker = new renderWorker();
@@ -102,8 +107,16 @@ class Game {
     }
 
     private RunGame() {
+        const timeElement = document.querySelector<HTMLDivElement>(".time");
+        const runHistory = new RunHistoryImpl();
+        if(timeElement){
+            const time = new Time(timeElement);
+            this.runHandler = new RunHandlerImpl(time, runHistory);
+            this.elementHandler.add(time);
+        }
+
         let streamPlatform: StreamPlatformField | undefined;
-        const player = new Figure(0, this._gameField.bottom - 50, new StarlingAnimation(this._imageHandler));
+        const player = new Figure(0, this._gameField.bottom - 50, new StarlingAnimation(this._imageHandler), this.runHandler);
         this._gameField.follow(player);
         this.elementHandler.add(player);
         ControllerHandler.Instance.controll(player);
@@ -119,24 +132,27 @@ class Game {
             this._gameField.addToTranslate(dayContainer);
             streamPlatform = new StreamPlatformField(0, this._gameField.viewHeight, this._gameField.width, dayContainer);
             this.elementHandler.add(streamPlatform);
-            this._savePointHandler = new SavePointHandler(player, streamPlatform);
-            ControllerHandler.Instance.controll(this._savePointHandler);
+            if(this.runHandler) {
+                this._savePointHandler = new SavePointHandler(player, streamPlatform, this.runHandler);
+                ControllerHandler.Instance.controll(this._savePointHandler);
+            }
         }else {
             this.elementHandler.add(new PlatformField(0, -1000, this._gameField.width, this._gameField.viewHeight + 1000))
         }
 
+        let end: End | undefined;
+        if(this.runHandler) {
+            end = new End(this.elementHandler, player, this.runHandler, this._gameField.width);
+            this.elementHandler.add(end);
+        }
+
         const controllbarElement = document.querySelector<HTMLDivElement>(".controllbar");
-        if(controllbarElement && this._savePointHandler) {
-            const controllbar = new Controllbar(controllbarElement, player, this._savePointHandler);
+        if(controllbarElement && this._savePointHandler && this.runHandler && end) {
+            const controllbar = new Controllbar(controllbarElement, player, this._savePointHandler, this.runHandler, end);
             this.elementHandler.add(controllbar);
         }
-
-        const timeElement = document.querySelector<HTMLDivElement>(".time");
-        if(timeElement){
-            this.elementHandler.add(new Time(timeElement));
-        }
         this.elementHandler.subElementInitialize();
-
+        
         this._savePointHandler?.returnToSavePoint();
     }
 }

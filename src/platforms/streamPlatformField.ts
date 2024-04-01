@@ -1,7 +1,6 @@
 import { Day } from "../day";
 import { GameElementHandler } from "../elements/gameElementHandler";
 import { EliaBreakPlatform } from "./eliaBreakPlatform";
-import { End } from "../end";
 import { Figure } from "../figure";
 import { Platform } from "./platform";
 import { SavePoint } from "../savePoint";
@@ -109,7 +108,7 @@ export class StreamPlatformField extends GameElementHandler implements SavePoint
         let currentY = this._baseLine;
         this._dayElementContainer.style.setProperty('--dayHeight', rowHeight + "px");
         this._dayElementContainer.style.setProperty('--platformHeight', StreamPlatformField.StreamHeight + "px");
-        let lastSavePointMonth = days[0].date.getMonth();
+        let lastSavePointDate= days[0].date;
         for (let index = 0; index < days.length; index++) {
             currentY -= rowHeight;
             const day = days[index];
@@ -124,11 +123,11 @@ export class StreamPlatformField extends GameElementHandler implements SavePoint
                     [platform, remainingWidhtUnits, hasGap, doubleDay] =this.convertStreamIntoPlatforms(stream, currentY,remainingWidhtUnits, hasGap, doubleDay);
 
                     
-                    if(day.date.getMonth() != lastSavePointMonth) {
+                    if(day.date.getMonth() != lastSavePointDate.getMonth()) {
                         let savePointPlatform = new SavePointPlatform(platform);
                         this.add(savePointPlatform);
-                        this._savePoints.push(new SavePoint(stream.videoLink, savePointPlatform));
-                        lastSavePointMonth = day.date.getMonth();
+                        this._savePoints.push(new SavePoint(stream.videoLink, lastSavePointDate.toLocaleDateString(undefined, {month: "long", year: "numeric"}), savePointPlatform));
+                        lastSavePointDate = day.date;
                     }else {
                         this.add(platform);
                     }
@@ -151,7 +150,6 @@ export class StreamPlatformField extends GameElementHandler implements SavePoint
         const end = document.createElement("span");
         end.style.setProperty("--dayHeight", "2000px");
         this._dayElementContainer.appendChild(end);
-        this.add(new End(0, currentY - 300));
         this.savePointsProvided();
     }
 

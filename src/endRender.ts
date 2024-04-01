@@ -1,15 +1,23 @@
 import { RenderContext } from "./render/renderContext";
 import { RenderData } from "./render/renderData";
-import { RendererImpl } from "./render/renderer";
+import { RendererImpl, TypedRenderer } from "./render/renderer";
+import { convertToTimeString } from "./util/convertToTimeString";
 
-export class EndRender extends RendererImpl {
-    render(context: RenderContext, renderData: RenderData): void {
-        context.drawContext.save();
-        context.drawContext.font = "100px Ariel";
-        context.drawContext.fillStyle = "#81678e";
-        context.drawContext.fillText("This is the end!", renderData.x, renderData.y);
-        context.drawContext.fillText("Thanks for playing", renderData.x , renderData.y + 120);
-        context.drawContext.restore();
+export interface EndRenderData extends RenderData {
+    reached: boolean,
+    time: number,
+}
+
+export class EndRender extends TypedRenderer<EndRenderData> {
+    protected _render(context: RenderContext, renderData: EndRenderData): void {
+        context.drawContext.beginPath();
+        context.drawContext.font = "50px Arial";
+        context.drawContext.fillStyle = renderData.reached ? context.colorMap["success-color"] : context.colorMap["primary-font-color"];
+        const text = convertToTimeString(renderData.time);
+        const measure = context.drawContext.measureText(text)
+        let actualHeight = measure.actualBoundingBoxAscent + measure.actualBoundingBoxDescent;
+        context.drawContext.fillText(text, renderData.x, renderData.y + actualHeight + renderData.height);
+        context.drawContext.closePath();
     }
 
 }

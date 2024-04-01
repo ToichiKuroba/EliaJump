@@ -1,6 +1,7 @@
 import { Figure } from "./figure";
 import { SavePoint } from "./savePoint";
 import { SavePointProvider } from "./savePointProvider";
+import { RunHandler } from "./time/runHandler";
 
 export class SavePointHandler {
     private static STORAGE_KEY = "SavePoints";
@@ -9,7 +10,8 @@ export class SavePointHandler {
     private _reachedSavePoints: string[];
     private _notReachedSavePoints: string[];
     private _savePointProvider: SavePointProvider;
-    constructor(player: Figure, savePointProvider: SavePointProvider) {
+    private readonly _runHandler: RunHandler;
+    constructor(player: Figure, savePointProvider: SavePointProvider, runHandler: RunHandler) {
         this._player = player;
         this._savePoints = new Map<string, SavePoint>();
         const storage = localStorage.getItem(SavePointHandler.STORAGE_KEY);
@@ -17,6 +19,7 @@ export class SavePointHandler {
         this._notReachedSavePoints = [];
         this._savePointProvider = savePointProvider;
         this._savePointProvider.onSavePointsProvided = savePoints => this.savePoints = savePoints;
+        this._runHandler = runHandler;
     }
 
     set savePoints(savePoints: SavePoint[]) {
@@ -41,6 +44,7 @@ export class SavePointHandler {
                 const savePoint = this._savePoints.get(savePointId);
                 if (savePoint && savePoint.y > this._player.y) {
                     savePoint.reached = true;
+                    this._runHandler.saveSnapshot(savePoint.id, savePoint.name);
                     this._reachedSavePoints.push(savePointId);
                     this._notReachedSavePoints.splice(savePointIndex, 1);
                     this.saveReachedSavePoints();

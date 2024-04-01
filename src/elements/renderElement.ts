@@ -1,5 +1,5 @@
 import { CollisionElement } from "../collision/collisionElement";
-import { RenderData } from "../render/renderData";
+import { RenderData, positionChanged } from "../render/renderData";
 import { RenderMap } from "../render/renderMap";
 import { DefaultGameElement, GameElement } from "./gameElement";
 import { GameElementState } from "./gameElementState";
@@ -58,7 +58,7 @@ export interface RenderElement extends CollisionElement {
 }
 
 export function extractRenderData(renderElement: RenderElement & GameElement, rendererKey: keyof RenderMap) : RenderData {
-    return {
+    const renderData = {
         rendererKey,
         y : renderElement.y,
         x : renderElement.x,
@@ -68,4 +68,10 @@ export function extractRenderData(renderElement: RenderElement & GameElement, re
         transferables: [],
         prevRenderData: {...renderElement.prevRenderData, prevRenderData: undefined}
     } as RenderData;
+
+    if(renderData.needsRerender) {
+        renderData.needsRerender = positionChanged(renderData, renderData.prevRenderData);
+    }
+
+    return renderData;
 }

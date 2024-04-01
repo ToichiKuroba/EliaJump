@@ -10,3 +10,7 @@ export interface RenderData {
     needsRerender: boolean,
     prevRenderData: RenderData | undefined,
 }
+
+export function positionChanged(newData : RenderData, oldData?: RenderData) {
+    return oldData?.x != newData.x || oldData.y != newData.y || oldData.width != newData.width || oldData.height != newData.height;
+}

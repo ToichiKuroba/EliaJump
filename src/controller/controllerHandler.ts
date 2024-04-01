@@ -8,7 +8,7 @@ import { ClickController } from "./clickController";
 import { Controller } from "./controller";
 import { PlayerController } from "./playerController";
 import { SavePointController } from "./savePointController";
-import { LeaderBoard } from "../leaderBoard";
+import { LeaderBoard } from "../time/leaderBoard";
 import { LeaderBoardController } from "./leaderBoardController";
 import { isModalDomElement } from "../elements/modalDomElement";
 import { ModalElementController } from "./modalElementController";
