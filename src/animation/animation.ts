@@ -27,7 +27,7 @@ export abstract class BaseAnimation<AnimationDataType extends AnimationData> imp
         return currentFrame;
     }
     private _direction: number = 1;
-    private _lastFrameChange: number | undefined;
+    protected _lastFrameChange: number | undefined;
     protected changeInterval: number;
 
     constructor(changeInterval: number) {

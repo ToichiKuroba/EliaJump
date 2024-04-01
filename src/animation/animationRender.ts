@@ -5,7 +5,8 @@ import { TypedRenderer } from "../render/renderer";
 
 export interface AnimationRenderData extends RenderData {
     frame: string,
-    fliped?: boolean
+    fliped?: boolean,
+    rotationDegree?: number
 }
 
 export class AnimationRender extends TypedRenderer<AnimationRenderData> {
@@ -21,14 +22,23 @@ export class AnimationRender extends TypedRenderer<AnimationRenderData> {
             return;
         }
 
+        context.drawContext.save();
+        if(renderData.rotationDegree){
+            const centerX = renderData.x + (renderData.width / 2);
+            const centerY = renderData.y + (renderData.height / 2);
+            context.drawContext.translate(centerX, centerY);
+            context.drawContext.rotate((renderData.rotationDegree * Math.PI) / 180);
+            context.drawContext.translate(-centerX, -centerY);
+
+        }
+
         if(renderData.fliped) {
-            context.drawContext.save();
             context.drawContext.scale(-1, 1);
             context.drawContext.drawImage(image, (-renderData.x - renderData.width), renderData.y, renderData.width, renderData.height);  
-            context.drawContext.restore();
         }else {
             context.drawContext.drawImage(image, renderData.x, renderData.y, renderData.width, renderData.height);  
         }
+        context.drawContext.restore();
 
     }
 }

@@ -20,6 +20,10 @@ export class GameElementHandler extends MetaElement {
         return this._topY;
     }
 
+    protected set topY(value: number) {
+        this._topY = value;
+    }
+
     getRenderElementDatas(renderArea: RenderArea): RenderElementDatas {
         const data = new Map<RenderPrio, RenderData[]>();
         let transferables: Transferable[] = [];
@@ -100,6 +104,7 @@ export class GameElementHandler extends MetaElement {
         this._renderElements = [];
         this._metaElements = [];
         this._notRenderElements = [];
+        this._topY = 0;
         for (let index = this._elements.length - 1; index >= 0; index--) {
             const element = this._elements[index];
             if (element instanceof MetaElement) {

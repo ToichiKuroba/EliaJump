@@ -147,6 +147,7 @@ export class StreamPlatformField extends GameElementHandler implements SavePoint
             this.add(new Day(this._dayElementContainer, day.date, rowHeight + rowHeight * doubleDay));
         }
 
+        this.topY = currentY;
         const end = document.createElement("span");
         end.style.setProperty("--dayHeight", "2000px");
         this._dayElementContainer.appendChild(end);

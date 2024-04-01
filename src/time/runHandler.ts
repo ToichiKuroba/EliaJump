@@ -10,6 +10,7 @@ export interface RunHandler {
     get isRunning() : boolean;
     start(): void;
     get currentTime(): number;
+    getLatestRun(): Promise<Run>;
 }
 
 export class RunHandlerImpl implements RunHandler {    
@@ -22,6 +23,9 @@ export class RunHandlerImpl implements RunHandler {
         const storage = localStorage.getItem(RunHandlerImpl.SnapshortsKey);
         this._currentSnapshots = storage ? JSON.parse(storage) as TimeSnapshot[] : [];
         this._runHistory = runHistory;
+    }
+    getLatestRun(): Promise<Run> {
+        return this._runHistory.getLatestRun();
     }
     get isRunning(): boolean {
         return this._timeHandler.isRunning;

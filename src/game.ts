@@ -20,6 +20,7 @@ import { RunHandler, RunHandlerImpl } from "./time/runHandler";
 import { RunHistoryImpl } from "./time/runHistory";
 import { End } from "./end";
 import { GameElement } from "./elements/gameElement";
+import { EndStarlingAnimation } from "./animation/endStarlingAnimation";
 
 function Init() {
     if (document.readyState == "complete") {
@@ -141,10 +142,11 @@ class Game {
         }
 
         let end: End | undefined;
-        if(this.runHandler) {
-            end = new End(this.elementHandler, player, this.runHandler, this._gameField.width);
+        if(this.runHandler && streamPlatform) {
+            end = new End(streamPlatform, player, this.runHandler, this._gameField.width, new EndStarlingAnimation(this._imageHandler));
             this.elementHandler.add(end);
         }
+
 
         const controllbarElement = document.querySelector<HTMLDivElement>(".controllbar");
         if(controllbarElement && this._savePointHandler && this.runHandler && end) {

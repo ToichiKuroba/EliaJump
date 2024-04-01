@@ -25,7 +25,7 @@ export class RenderMapImpl implements RenderMap {
         this.Platform = new PlatformRender();
         this.Animation = new AnimationRender(imageMap);
         this.StreamPlatform = new StreamPlatformRender(this.Platform);
-        this.End = new EndRender();
+        this.End = new EndRender(this.Animation);
         this.SavePointPlatform = new SavePointPlatformRender(this);
         this.EliaBreakPlatform = new EliaBreakPlatformRender();
     }
