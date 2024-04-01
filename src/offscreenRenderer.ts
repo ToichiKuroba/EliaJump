@@ -114,7 +114,8 @@ export class OffscreenRenderer implements AsyncRenderer {
             const clearedArea = this._clearedAreas[index];
             const yEnd = renderData.y + renderData.height;
             if ((renderData.y >= clearedArea.yStart && renderData.y <= clearedArea.yEnd)
-                || (yEnd >= clearedArea.yStart && yEnd <= clearedArea.yEnd)) {
+                || (yEnd >= clearedArea.yStart && yEnd <= clearedArea.yEnd)
+                || (renderData.y <= clearedArea.yStart && yEnd >= clearedArea.yEnd)) {
                 return true;
             }
         }
