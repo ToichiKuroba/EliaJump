@@ -37,7 +37,7 @@ export class OffscreenRenderer implements AsyncRenderer {
     get viewHeight() {
         return this._canvas.height / this._dpr;
     }
-
+    
     adjustSize(widthAdjustment: number, heightAdjustment: number, dpr: number, yTranslation: number) {
         this._dpr = dpr;
         if (heightAdjustment != 0) {
@@ -48,7 +48,7 @@ export class OffscreenRenderer implements AsyncRenderer {
             this._canvas.width += widthAdjustment;
         }
 
-        if (heightAdjustment != 0 && widthAdjustment != 0 && this._context) {
+        if ((heightAdjustment != 0 || widthAdjustment != 0) && this._context) {
             this._context.scale(dpr, dpr);
             this.translateScreen(this._context, 0, yTranslation);
             this._fullRerender = true;
